@@ -2,3 +2,6 @@ node_modules/
 /config/local-*
 .type/
 *.tgz
+test-it/result/
+test-it/resources
+data

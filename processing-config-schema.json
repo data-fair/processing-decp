@@ -3,7 +3,7 @@
   "layout": "tabs",
   "required": [
     "datasetMode",
-    "message"
+    "url"
   ],
   "allOf": [
     {
@@ -12,13 +12,15 @@
         "datasetMode": "create",
         "dataset": {
           "id": "",
-          "title": "Hello world "
+          "title": "DECP"
         }
       },
       "oneOf": [
         {
           "title": "Créer un jeu de données",
-          "required": ["dataset"],
+          "required": [
+            "dataset"
+          ],
           "properties": {
             "datasetMode": {
               "type": "string",
@@ -34,7 +36,7 @@
                 "title": {
                   "type": "string",
                   "title": "Titre",
-                  "default": "Hello world "
+                  "default": "DECP"
                 }
               }
             }
@@ -42,7 +44,9 @@
         },
         {
           "title": "Mettre à jour un jeu de données",
-          "required": ["dataset"],
+          "required": [
+            "dataset"
+          ],
           "properties": {
             "datasetMode": {
               "type": "string",
@@ -76,55 +80,12 @@
       ]
     },
     {
-      "title": "Options de tests",
+      "title": "Source des données",
       "properties": {
-        "message": {
+        "url": {
+          "title": "URL source",
           "type": "string",
-          "title": "Message",
-          "default": "world !"
-        },
-        "delay": {
-          "type": "integer",
-          "title": "Délai en secondes (utilisé pour tester l'interruption de tâche)",
-          "default": 1
-        },
-        "secretField": {
-          "type": "string",
-          "title": "Champ secret",
-          "description": "La valeur de ce champ est sauvegardé chiffré en base et n'est jamais renvoyé à l'utilisateur. Il peut être utilisé pour stocker des informations sensibles. Pour vérifier que le traitement ai bien accès à la valeur non chiffrée, elle est affiché dans la description du jeu de données. (Utilisé pour tester le chiffrement de données sensibles)",
-          "layout": {
-            "props": {
-              "type": "password",
-              "autocomplete": "suppress"
-            }
-          }
-        },
-        "ignoreStop": {
-          "type": "boolean",
-          "title": "Ignorer l'instruction de stop (utilisé pour tester l'interruption brutale de tâche)"        },
-        "throwError": {
-          "type": "boolean",
-          "title": "Déclencher une erreur (utilisé pour tester la gestion des erreurs)"
-        },
-        "deleteOnComplete": {
-          "type": "boolean",
-          "title": "Supprimer cet execution une fois terminée (utilisé pour tester l'auto suppression)"
-        }
-      }
-    },
-    {
-      "title": "Email",
-      "properties": {
-        "email": {
-          "type": "object",
-          "properties": {
-            "from": {
-              "type": "string"
-            },
-            "to": {
-              "type": "string"
-            }
-          }
+          "description": "les protocoles supportés sont HTTP et HTTPS"
         }
       }
     }

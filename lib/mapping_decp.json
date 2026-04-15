@@ -1,0 +1,252 @@
+[
+    {
+        "key": "nature",
+        "path": "nature"
+    },
+    {
+        "key": "montant",
+        "path": "montant"
+    },
+    {
+        "key": "procedure",
+        "path": "procedure"
+    },
+    {
+        "key": "objet",
+        "path": "objet"
+    },
+    {
+        "key": "datenotification",
+        "path": "dateNotification"
+    },
+    {
+        "key": "formeprix",
+        "path": "formePrix"
+    },
+    {
+        "key": "lieuexecutiontypecode",
+        "path": "lieuExecution.typeCode"
+    },
+    {
+        "key": "lieuexecutioncode",
+        "path": "lieuExecution.code"
+    },
+    {
+        "key": "acheteurid",
+        "path": "acheteur.id"
+    },
+    {
+        "key": "dureemois",
+        "path": "dureeMois"
+    },
+    {
+        "key": "id",
+        "path": "id"
+    },
+    {
+        "key": "codecpv",
+        "path": "codeCPV"
+    },
+    {
+        "key": "datepublicationdonnees",
+        "path": "datePublicationDonnees"
+    },
+    {
+        "key": "offresrecues",
+        "path": "offresRecues"
+    },
+    {
+        "key": "ccag",
+        "path": "ccag"
+    },
+    {
+        "key": "typegroupementoperateurs",
+        "path": "typeGroupementOperateurs"
+    },
+    {
+        "key": "titulairessiret",
+        "path": "titulaires",
+        "subFields": [
+            {
+                "out": "titulairesiret",
+                "in": "titulaire.id"
+            }
+        ]
+    },
+    {
+        "key": "considerationssociales",
+        "path": "considerationsSociales.considerationSociale"
+    },
+    {
+        "key": "considerationsenvironnementales",
+        "path": "considerationsEnvironnementales.considerationEnvironnementale"
+    },
+    {
+        "key": "modalitesexecution",
+        "path": "modalitesExecution.modaliteExecution"
+    },
+    {
+        "key": "techniques",
+        "path": "techniques.technique"
+    },
+    {
+        "key": "typesprix",
+        "path": "typesPrix.typePrix"
+    },
+    {
+        "key": "modifications",
+        "path": "modifications",
+        "subFields": [
+            {
+                "out": "modificationid",
+                "in": "modification.id"
+            },
+            {
+                "out": "modificationdatenotification",
+                "in": "modification.dateNotificationModification"
+            },
+            {
+                "out": "modificationdatepublicationdonnees",
+                "in": "modification.datePublicationDonneesModification"
+            },
+            {
+                "out": "modificationmontant",
+                "in": "modification.montant"
+            }
+        ]
+    },
+    {
+        "key": "source",
+        "path": "source"
+    },
+    {
+        "key": "origineue",
+        "path": "origineUE"
+    },
+    {
+        "key": "originefrance",
+        "path": "origineFrance"
+    },
+    {
+        "key": "tauxavance",
+        "path": "tauxAvance"
+    },
+    {
+        "key": "soustraitancedeclaree",
+        "path": "sousTraitanceDeclaree"
+    },
+    {
+        "key": "idaccordcadre",
+        "path": "idAccordCadre"
+    },
+    {
+        "key": "actessoustraitance",
+        "path": "actesSousTraitance",
+        "subFields": [
+            {
+                "out": "soustraitantssiret",
+                "in": "acteSousTraitance.sousTraitant.id"
+            },
+            {
+                "out": "actesoustraitancedureemois",
+                "in": "acteSousTraitance.dureeMois"
+            },
+            {
+                "out": "actesoustraitancedatenotification",
+                "in": "acteSousTraitance.dateNotification"
+            },
+            {
+                "out": "actesoustraitancemontant",
+                "in": "acteSousTraitance.montant"
+            },
+            {
+                "out": "actesoustraitancevariationprix",
+                "in": "acteSousTraitance.variationPrix"
+            },
+            {
+                "out": "actesoustraitancedatepublicationdonnees",
+                "in": "acteSousTraitance.datePublicationDonnees"
+            }
+        ]
+    },
+    {
+        "key": "modificationsactessoustraitance",
+        "path": "modificationsActesSousTraitance",
+        "subFields": [
+            {
+                "out": "modificationactesoustraitanceid",
+                "in": "modificationActeSousTraitance.id"
+            },
+            {
+                "out": "datenotificationmodificationsoustraitance",
+                "in": "modificationActeSousTraitance.dateNotificationModificationSousTraitance"
+            },
+            {
+                "out": "modificationactesoustraitancemontant",
+                "in": "modificationActeSousTraitance.montant"
+            },
+            {
+                "out": "modificationactesoustraitancedatepublicationdonnees",
+                "in": "modificationActeSousTraitance.datePublicationDonnees"
+            }
+        ]
+    },
+    {
+        "key": "valeurglobale",
+        "path": "valeurGlobale"
+    },
+    {
+        "key": "montantsubventionpublique",
+        "path": "montantSubventionPublique"
+    },
+    {
+        "key": "autoriteconcedanteid",
+        "path": "autoriteConcedante.id"
+    },
+    {
+        "key": "datesignature",
+        "path": "dateSignature"
+    },
+    {
+        "key": "datesignature",
+        "path": "dateSignature"
+    },
+    {
+        "key": "donneesexecution",
+        "path": "donneesExecution",
+        "subFields": [
+            {
+                "out": "datepublicationdonneesexecution",
+                "in": "donneesAnnuelles.datePublicationDonneesExecution"
+            },
+            {
+                "out": "depensesinvestissement",
+                "in": "donneesAnnuelles.depensesInvestissement"
+            },
+            {
+                "out": "tarifs",
+                "in": "donneesAnnuelles.tarifs",
+                "subFields": [
+                    {
+                        "out": "intituletarif",
+                        "in": "tarif.intituleTarif"
+                    },
+                    {
+                        "out": "montanttarif",
+                        "in": "tarif.tarif"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "key": "concessionnairessiret",
+        "path": "concessionnaires",
+        "subFields": [
+            {
+                "out": "concessionnairessiret",
+                "in": "concessionnaire.id"
+            }
+        ]
+    }
+]

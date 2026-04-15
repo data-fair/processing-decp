@@ -1,61 +1,209 @@
-import type { ProcessingConfig } from '../types/processingConfig/index.ts'
-
 import config from '#config'
-import { strict as assert } from 'node:assert'
-import { it, describe } from 'node:test'
+import assert from 'node:assert'
+import { it, describe, afterEach } from 'node:test'
+import nock from 'nock'
+import fs from 'fs-extra'
+import path from 'node:path'
+
+import { chain } from 'stream-chain'
+import { parser } from 'stream-json'
+import { pick } from 'stream-json/filters/pick.js'
+import { streamArray } from 'stream-json/streamers/stream-array.js'
+
 import testUtils from '@data-fair/lib-processing-dev/tests-utils.js'
-import * as helloWorldPlugin from '../index.ts'
+import * as decpPlugin from '../index.ts'
 
 import pluginConfigSchema from '../plugin-config-schema.json' with { type: 'json' }
 import processingConfigSchema from '../processing-config-schema.json' with { type: 'json' }
 
-describe('Hello world processing', () => {
-  // Each plugins should expose a plugin config schema and a processing config schema
-  it('should expose a plugin config schema for super admins', async () => {
-    assert.equal(pluginConfigSchema.properties.pluginMessage.default, 'Hello')
+describe('DECP processing', () => {
+  afterEach(() => {
+    nock.cleanAll()
   })
-  it('should expose a processing config schema for users', async () => {
-    assert.equal(processingConfigSchema.type, 'object')
-  })
+  // it('should expose a plugin config schema for super admins', async () => {
+  //   assert.ok(pluginConfigSchema)
+  // })
+  // it('should expose a processing config schema for users', async () => {
+  //   assert.equal(processingConfigSchema.type, 'object')
+  // })
 
-  it('should run a task', async function () {
+  // it('should get url', async function () {
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //       url: 'https://www.data.gouv.fr/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/'
+  //     }
+  //   }, config, false)
+
+  //   assert.equal(context.processingConfig.url, 'https://www.data.gouv.fr/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/')
+  // })
+
+  // it('no url', async function () {
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //     }
+  //   }, config, false)
+  //   const { listAttachements } = await import('../lib/fetch.ts')
+  //   await assert.rejects(
+  //     listAttachements(context),
+  //     {
+  //       name: 'Error',
+  //       message: 'URL is missing in processingConfig'
+  //     }
+  //   )
+  // })
+
+  // it('get list decp available', async function () {
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //       url: 'https://www.data.gouv.fr/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/'
+  //     }
+  //   }, config, false)
+
+  //   const mockData = JSON.parse(
+  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/dataset_decp.json'), 'utf8')
+  //   )
+  //   nock('https://www.data.gouv.fr')
+  //     .persist()
+  //     .get('/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/')
+  //     .reply(200, mockData)
+
+  //   const { listAttachements } = await import('../lib/fetch.ts')
+  //   const attachements = await listAttachements(context)
+  //   assert.equal(attachements.length, 5)
+  // })
+
+  // it('Get one decp', async function () {
+  //   const context = testUtils.context({
+  //     tmpDir: 'data',
+  //     pluginConfig: {},
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       url: 'https://www.data.gouv.fr/api/1/datasets/r/2551ad40-584a-42fd-b3cc-e8906183287e'
+  //     },
+  //   }, config, false)
+
+  //   const { axios, tmpDir, processingConfig } = context
+
+  //   const mockData = JSON.parse(
+  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/decp-2026.json'), 'utf8')
+  //   )
+
+  //   nock('https://www.data.gouv.fr')
+  //     .get('/api/1/datasets/r/2551ad40-584a-42fd-b3cc-e8906183287e')
+  //     .reply(200, mockData)
+
+  //   const { getAttachement } = await import('../lib/fetch.ts')
+  //   const jsonDecp = await getAttachement(processingConfig.url, tmpDir, axios)
+  //   const count = await compterMarches(jsonDecp, 'marches.marche')
+  //   assert.equal(count, 82227)
+  // })
+
+  // it('flatten a contract component', async function () {
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //     }
+  //   }, config, false)
+  //   const { log } = context
+  //   const mockData = JSON.parse(
+  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/marche.json'), 'utf8')
+  //   )
+  //   const { flattenData } = await import('../lib/convert.ts')
+  //   assert.equal(mockData.dureeMois, 48)
+  //   const res = flattenData(mockData, 1, log)
+  //   assert.equal(res.nature, 'Marché')
+  //   assert.equal(res.considerationsEnvironnementales, 'Clause environnementale ; Critère environnemental')
+  //   assert.equal(res.considerationsSociales, 'Pas de considération sociale')
+  // })
+
+  // it('write a list of flatten component', async function () {
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //     }
+  //   }, config, false)
+  //   const { log } = context
+  //   const pathDir = (path.join(import.meta.dirname, 'result'))
+  //   const mockData = (path.join(import.meta.dirname, 'resources/mini-decp.json'))
+
+  //   const { writeFlattenData } = await import('../lib/convert.ts')
+  //   const resPath = await writeFlattenData(mockData, pathDir, 'mini-decp_flatten.json', log)
+  //   const count = await compterMarches(resPath, '')
+  //   assert.equal(count, 9)
+  // })
+
+  // it('flatten  all of a decp', async function () {
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //     }
+  //   }, config, false)
+  //   const { log } = context
+  //   const pathDir = (path.join(import.meta.dirname, 'result'))
+  //   const mockData = (path.join(import.meta.dirname, 'resources/decp-2026.json'))
+
+  //   const { writeFlattenData } = await import('../lib/convert.ts')
+  //   const resPath = await writeFlattenData(mockData, pathDir, 'decp_flatten.json', log)
+  //   const count = await compterMarches(resPath, '')
+  //   assert.equal(count, 82227)
+  // })
+
+  it('send flatten data to data fair', async function () {
+    // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
     const context = testUtils.context({
-      pluginConfig: { pluginMessage: 'Hello' },
       processingConfig: {
         datasetMode: 'create',
-        dataset: { title: 'Hello world test' },
-        message: 'world test !',
-        delay: 1
-      }
+        dataset: { title: 'decp' },
+      },
+      tmpDir: 'data',
+      processingId: 'b1w5di5y95wj9j-o1s1m2lrw'
     }, config, false)
-
-    await helloWorldPlugin.run(context)
-    assert.equal(context.processingConfig.datasetMode, 'update')
-    assert.equal(context.processingConfig.dataset.title, 'Hello world test')
+    const mockData = (path.join(import.meta.dirname, 'resources/decp-2026.json'))
+    const { sendFlattenData } = await import('../lib/upload.ts')
+    await sendFlattenData(mockData, 'b1w5di5y95wj9j-o1s1m2lrw', context)
   })
 
-  it('should use secrets', async function () {
-    const processingConfig: ProcessingConfig = {
-      datasetMode: 'create',
-      dataset: { title: 'Hello world test' },
-      message: 'world test !',
-      delay: 1,
-      secretField: 'Texte secret'
-    }
-
-    const prepareRes = await helloWorldPlugin.prepare({ processingConfig, secrets: { } })
-    assert.ok(prepareRes.processingConfig)
-    assert.equal(prepareRes.processingConfig.secretField, '********')
-
-    assert.ok(prepareRes.secrets)
-    assert.equal(prepareRes.secrets.secretField, 'Texte secret', 'the secret is not correctly returned by prepare function')
-
-    const context = testUtils.context({
-      pluginConfig: { pluginMessage: 'Hello' },
-      processingConfig: prepareRes.processingConfig,
-      secrets: prepareRes.secrets,
-    }, config, false)
-
-    await helloWorldPlugin.run(context)
-  })
+//   it('No stream : send flatten data to data fair', async function () {
+//     // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
+//     const context = testUtils.context({
+//       processingConfig: {
+//         datasetMode: 'create',
+//         dataset: { title: 'decp' },
+//       },
+//       tmpDir: 'data',
+//       processingId: 'b1w5di5y95wj9j-o1s1m2lrw'
+//     }, config, false)
+//     const mockData = (path.join(import.meta.dirname, 'result/mini-decp_flatten.json'))
+//     const fileContent = JSON.parse(fs.readFileSync(mockData, 'utf-8'))
+//     const json = JSON.stringify(fileContent)
+//     const { upload } = await import('../lib/upload.ts')
+//     await upload(context, 'b1w5di5y95wj9j-o1s1m2lrw', json)
+//   })
 })
+
+async function compterMarches (cheminFichier: string, filter: string) {
+  let compteur = 0
+
+  return new Promise((resolve, reject) => {
+    const pipeline = chain([
+      fs.createReadStream(cheminFichier),
+      parser(),
+      pick({ filter: `${filter}` }),
+      streamArray()
+    ])
+    pipeline.on('data', () => {
+      compteur++
+    })
+    pipeline.on('end', () => resolve(compteur))
+    pipeline.on('error', reject)
+  })
+}

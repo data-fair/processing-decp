@@ -1,0 +1,273 @@
+[
+  {
+    "key": "idcontrat",
+    "x-originalName": "idContrat",
+    "type": "integer",
+    "title": "IdContrat",
+    "description": "",
+    "label": "IdContrat"
+  },
+  {
+    "key": "nature",
+    "x-originalName": "Nature",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "Nature"
+  },
+  {
+    "key": "montant",
+    "x-originalName": "Montant",
+    "type": "number",
+    "title": "",
+    "description": "",
+    "label": "Montant"
+  },
+  {
+    "key": "procedure",
+    "x-originalName": "Procedure",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "Procedure"
+  },
+  {
+    "key": "objet",
+    "x-originalName": "Objet",
+    "type": "string",
+    "x-display": "textarea",
+    "title": "",
+    "description": "",
+    "label": "Objet"
+  },
+  {
+    "key": "datenotification",
+    "x-originalName": "DateNotification",
+    "type": "string",
+    "format": "date",
+    "title": "",
+    "description": "",
+    "label": "DateNotification"
+  },
+  {
+    "key": "formeprix",
+    "x-originalName": "FormePrix",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "FormePrix"
+  },
+  {
+    "key": "lieuexecutiontypecode",
+    "x-originalName": "LieuExecutionTypeCode",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "LieuExecutionTypeCode"
+  },
+  {
+    "key": "lieuexecutioncode",
+    "x-originalName": "LieuExecutionCode",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "LieuExecutionCode"
+  },
+  {
+    "key": "acheteurid",
+    "x-originalName": "AcheteurID",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "AcheteurID"
+  },
+  {
+    "key": "ddureemois",
+    "x-originalName": "DdureeMois",
+    "type": "integer",
+    "title": "",
+    "description": "",
+    "label": "DdureeMois"
+  },
+  {
+    "key": "id",
+    "x-originalName": "ID",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "ID"
+  },
+  {
+    "key": "codecpv",
+    "x-originalName": "codeCPV",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "codeCPV"
+  },
+  {
+    "key": "datepublicationdonnees",
+    "x-originalName": "DatePublicationDonnees",
+    "type": "string",
+    "format": "date",
+    "title": "",
+    "description": "",
+    "label": "DatePublicationDonnees"
+  },
+  {
+    "key": "offresrecues",
+    "x-originalName": "OffresRecues",
+    "type": "integer",
+    "title": "",
+    "description": "",
+    "label": "OffresRecues"
+  },
+  {
+    "key": "ccag",
+    "x-originalName": "CCAG",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "CCAG"
+  },
+  {
+    "key": "typegroupementoperateurs",
+    "x-originalName": "TypeGroupementOperateurs",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "TypeGroupementOperateurs"
+  },
+  {
+    "key": "titulairesiret",
+    "x-originalName": "titulaireSIRET",
+    "type": "string",
+    "title": "Titulaire SIRET",
+    "x-refersTo": "http://www.datatourisme.fr/ontology/core/1.0/#siret",
+    "separator": "; ",
+    "x-concept": {
+      "id": "siret",
+      "title": "SIRET",
+      "primary": true
+    },
+    "description": "",
+    "label": "Titulaire SIRET"
+  },
+  {
+    "key": "considerationssociales",
+    "x-originalName": "ConsiderationsSociales",
+    "type": "string",
+    "title": "",
+    "separator": "; ",
+    "description": "",
+    "label": "ConsiderationsSociales"
+  },
+  {
+    "key": "considerationsenvironnementales",
+    "x-originalName": "considerationsEnvironnementales",
+    "type": "string",
+    "title": "",
+    "separator": "; ",
+    "description": "",
+    "label": "considerationsEnvironnementales"
+  },
+  {
+    "key": "modalitesexecution",
+    "x-originalName": "modalitesExecution",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "modalitesExecution"
+  },
+  {
+    "key": "techniques",
+    "x-originalName": "Techniques",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "Techniques"
+  },
+  {
+    "key": "typesprix",
+    "x-originalName": "TypesPrix",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "TypesPrix"
+  },
+  {
+    "key": "source",
+    "x-originalName": "Source",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "Source"
+  },
+  {
+    "key": "soustraitancedeclaree",
+    "x-originalName": "SousTraitanceDeclaree",
+    "type": "boolean",
+    "title": "",
+    "description": "",
+    "label": "SousTraitanceDeclaree"
+  },
+  {
+    "key": "idaccordcadre",
+    "x-originalName": "IdAccordCadre",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "IdAccordCadre"
+  },
+  {
+    "key": "soustraitantssiret",
+    "x-originalName": "SousTraitantsSIRET",
+    "type": "string",
+    "title": "",
+    "separator": "; ",
+    "description": "",
+    "label": "SousTraitantsSIRET"
+  },
+  {
+    "key": "actesoustraitancedureemois",
+    "x-originalName": "ActeSousTraitanceDureeMois",
+    "type": "number",
+    "title": "",
+    "description": "",
+    "label": "ActeSousTraitanceDureeMois"
+  },
+  {
+    "key": "actesoustraitancedatenotification",
+    "x-originalName": "ActeSousTraitanceDateNotification",
+    "type": "string",
+    "format": "date",
+    "title": "",
+    "description": "",
+    "label": "ActeSousTraitanceDateNotification"
+  },
+  {
+    "key": "actesoustraitancemontant",
+    "x-originalName": "ActeSousTraitanceMontant",
+    "type": "number",
+    "title": "",
+    "description": "",
+    "label": "ActeSousTraitanceMontant"
+  },
+  {
+    "key": "actesoustraitancevariationprix",
+    "x-originalName": "ActeSousTraitanceVariationPrix",
+    "type": "string",
+    "title": "",
+    "description": "",
+    "label": "ActeSousTraitanceVariationPrix"
+  },
+  {
+    "key": "actesoustraitancedatepublicationdonnees",
+    "x-originalName": "ActeSousTraitanceDatePublicationDonnees",
+    "type": "string",
+    "format": "date",
+    "title": "",
+    "description": "",
+    "label": "ActeSousTraitanceDatePublicationDonnees"
+  }
+]

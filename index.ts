@@ -1,33 +1,22 @@
-import type { PrepareFunction, RunFunction } from '@data-fair/lib-common-types/processings.js'
 import type { ProcessingConfig } from './types/processingConfig/index.ts'
+import type { ProcessingContext } from '@data-fair/lib-common-types/processings.js'
+import fs from 'fs-extra'
+import util from 'util'
+import { listAttachements, getAttachement } from './lib/fetch.ts'
+import { writeFlattenData } from './lib/convert.ts'
 
-/**
- * Function to prepare a processing (trigger when the config is updated).
- * It can be used to:
- * - throw additional errors to validate the config
- * - remove secrets from the config and store them in the secrets object
- */
-export const prepare: PrepareFunction<ProcessingConfig> = async (context) => {
-  const prepare = (await import('./lib/prepare.ts')).default
-  return prepare(context)
-}
+export const run = async (context: ProcessingContext<ProcessingConfig>) => {
+  // lancement de la recherche du fichier,récupération d'une url
+  const attachements = await listAttachements(context)
+  // Récupérer decp brute et le traiter
+  const { log, axios, tmpDir, processingConfig, patchConfig } = context
+  const filename = await getAttachement(attachements[0].url, tmpDir, axios) // récupère le path du fichier télécharger
+  // TODO applatir les données
+  const filnameTransform = await writeFlattenData(filename, tmpDir, 'decp_flatten.json', log)
+  // TODO adapter avec le schemas les données
 
-/**
- * Function to execute the processing (triggered when the processing is started).
- * This is the main function of the plugin where the business logic is implemented.
- */
-export const run: RunFunction<ProcessingConfig> = async (context) => {
-  const { run } = await import('./lib/execute.ts')
-  return run(context)
-}
+  // TODO envoyé données
 
-/**
- * Function to stop the processing (triggered when the processing is stopped).
- * It is used to manage interruption and prevent incoherent state.
- * The run method should finish shortly after calling stop.
- * Not required, but can be useful for long processing or to prevent incoherent state in case of interruption.
- */
-export const stop = async () => {
-  const { stop } = await import('./lib/execute.ts')
-  return stop()
+
+  // TODO voir pour supprimer les fichiers de référence pour le traitement
 }
