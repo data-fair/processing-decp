@@ -1,0 +1,142 @@
+[
+    {
+        "key": "nature",
+        "path": "nature"
+    },
+    {
+        "key": "procedure",
+        "path": "procedure"
+    },
+    {
+        "key": "objet",
+        "path": "objet"
+    },
+    {
+        "key": "dureemois",
+        "path": "dureeMois"
+    },
+    {
+        "key": "id",
+        "path": "id"
+    },
+    {
+        "key": "datepublicationdonnees",
+        "path": "datePublicationDonnees"
+    },
+    {
+        "key": "titulaires",
+        "path": "titulaires"
+    },
+     {
+        "key": "considerationssociales",
+        "path": "considerationsSociales.considerationSociale"
+    },
+    {
+        "key": "considerationsenvironnementales",
+        "path": "considerationsEnvironnementales.considerationEnvironnementale"
+    },
+    {
+        "key": "modifications",
+        "path": "modifications",
+        "subFields": [
+            {
+                "out": "modificationsid",
+                "in": "modification.id"
+            },
+            {
+                "out": "modificationsdureemois",
+                "in": "modification.dureeMois"
+            },
+            {
+                "out": "modificationsvaleurglobale",
+                "in": "modification.valeurGlobale"
+            },
+            {
+                "out": "objetmodification",
+                "in": "modification.objetModification"
+            },
+            {
+                "out": "datesignaturemodification",
+                "in": "modification.dateSignatureModification"
+            },
+            {
+                "out": "datepublicationdonneesmodification",
+                "in": "modification.datePublicationDonneesModification"
+            }   
+        ]
+    },
+    {
+        "key": "source",
+        "path": "source"
+    },
+    {
+        "key": "origineue",
+        "path": "origineUE"
+    },
+    {
+        "key": "originefrance",
+        "path": "origineFrance"
+    },
+    {
+        "key": "tauxavance",
+        "path": "tauxAvance"
+    },
+        {
+        "key": "valeurglobale",
+        "path": "valeurGlobale"
+    },
+    {
+        "key": "montantsubventionpublique",
+        "path": "montantSubventionPublique"
+    },
+    {
+        "key": "autoriteconcedanteid",
+        "path": "autoriteConcedante.id"
+    },
+    {
+        "key": "datesignature",
+        "path": "dateSignature"
+    },
+    {
+        "key": "datedebutexecution",
+        "path": "dateDebutExecution"
+    },
+    {
+        "key": "donneesexecution",
+        "path": "donneesExecution",
+        "subFields": [
+            {
+                "out": "datepublicationdonneesexecution",
+                "in": "donneesAnnuelles.datePublicationDonneesExecution"
+            },
+            {
+                "out": "depensesinvestissement",
+                "in": "donneesAnnuelles.depensesInvestissement"
+            },
+            {
+                "out": "tarifs",
+                "in": "donneesAnnuelles.tarifs",
+                "subFields": [
+                    {
+                        "out": "intituletarif",
+                        "in": "tarif.intituleTarif"
+                    },
+                    {
+                        "out": "montanttarif",
+                        "in": "tarif.tarif"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "key": "concessionnairessiret",
+        "path": "concessionnaires",
+        "subFields": [
+            {
+                "out": "concessionnairessiret",
+                "in": "concessionnaire.id"
+            }
+        ]
+    }
+]
