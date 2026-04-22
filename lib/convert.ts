@@ -11,7 +11,7 @@ import { disassembler } from 'stream-json/disassembler.js'
 import stringer from 'stream-json/stringer.js'
 
 // Maintenant le mapping est renseigné dans les paramètres pour faire le choix entre plusieurs types de mapping
-export const flattenData = (data: any, mapping: any[], increment: number, log: ProcessingContext['log']) => {
+export const flattenData = (data: any, mapping: any[], log: ProcessingContext['log']) => {
   // log.info('flatten data : ' + increment)
   if (!data) return {}
   const newData: any = buildEmptyRecord(mapping)

@@ -16,6 +16,7 @@ import * as decpPlugin from '../index.ts'
 import pluginConfigSchema from '../plugin-config-schema.json' with { type: 'json' }
 import processingConfigSchema from '../processing-config-schema.json' with { type: 'json' }
 
+import { countContrat } from '../lib/utils.ts'
 import mapping from '../lib/mapping/mapping_decp.json' with { type: 'json' }
 import mappingConcession from '../lib/mapping/mapping_decp_concession.json' with { type: 'json' }
 import mappingMarche from '../lib/mapping/mapping_decp_marche.json' with { type: 'json' }
@@ -104,7 +105,7 @@ describe('DECP processing', () => {
 
   //   const { getAttachement } = await import('../lib/fetch.ts')
   //   const jsonDecp = await getAttachement(processingConfig.url, tmpDir, axios)
-  //   const count = await compterMarches(jsonDecp, 'marches.marche')
+  //   const count = await countContract(jsonDecp, 'marches.marche')
   //   assert.equal(count, 82227)
   // })
 
@@ -140,7 +141,7 @@ describe('DECP processing', () => {
 
   //   const { writeFlattenData } = await import('../lib/convert.ts')
   //   const resPath = await writeFlattenData(mockData, pathDir, 'mini-decp_flatten.json', log)
-  //   const count = await compterMarches(resPath, '')
+  //   const count = await countContract(resPath, '')
   //   assert.equal(count, 9)
   // })
 
@@ -157,29 +158,29 @@ describe('DECP processing', () => {
 
   //   const { writeFlattenData } = await import('../lib/convert.ts')
   //   const resPath = await writeFlattenData(mockData, mapping, '/^marches\.(marche|contrat-concession)$/', pathDir, 'decp_flatten.json', log)
-  //   // const countDECP = await compterMarches(mockData, '')
+  //   // const countDECP = await countContract(mockData, '')
   //   console.log('nombre délément dans le decp : ' + countDECP)
-  //   const count = await compterMarches(resPath, '')
+  //   const count = await countContract(resPath, '')
   //   console.log('nombre dans le json : ' + count)
   //   assert.equal(count, 82227)
   // })
 
-  it('send flatten data to data fair (mapping)', async function () {
-    // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
-    const context = testUtils.context({
-      processingConfig: {
-        datasetMode: 'create',
-        dataset: { title: 'decp' },
-      },
-      tmpDir: 'data',
-      processingId: 'b1w5di5y95wj9j-o1s1m2lrw'
-    }, config, false)
-    const mockData = (path.join(import.meta.dirname, 'resources/decp-2025.json'))
-    // const countDECP = await compterMarches(mockData, 'marches.marche')
-    // console.log('total marche : ' + countDECP)
-    const { sendFlattenData } = await import('../lib/upload.ts')
-    await sendFlattenData(mapping, 'marches.marche', mockData, 'b1w5di5y95wj9j-o1s1m2lrw', context)
-  })
+  // it('send flatten data to data fair (mapping)', async function () {
+  //   // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'create',
+  //       dataset: { title: 'decp' },
+  //     },
+  //     tmpDir: 'data',
+  //     processingId: 'b1w5di5y95wj9j-o1s1m2lrw'
+  //   }, config, false)
+  //   const mockData = (path.join(import.meta.dirname, 'resources/decp-2025.json'))
+  //   // const countDECP = await countContract(mockData, 'marches.marche')
+  //   // console.log('total marche : ' + countDECP)
+  //   const { sendFlattenData } = await import('../lib/upload.ts')
+  //   await sendFlattenData(mapping, 'marches.marche', mockData, 'b1w5di5y95wj9j-o1s1m2lrw', context)
+  // })
 
   // it('send flatten data to data fair (contrat-concession)', async function () {
   //   // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
@@ -196,20 +197,20 @@ describe('DECP processing', () => {
   //   await sendFlattenData(mappingConcession, 'marches.contrat-concession', mockData, '4z69j2br8fruagna1hjzoqmi', context)
   // })
 
-  // it('send flatten data to data fair (marché)', async function () {
-  //   // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
-  //   const context = testUtils.context({
-  //     processingConfig: {
-  //       datasetMode: 'create',
-  //       dataset: { title: 'decp' },
-  //     },
-  //     tmpDir: 'data',
-  //     processingId: 'vv5hlmbnqhs1eqk1ttgbpxe9/'
-  //   }, config, false)
-  //   const mockData = (path.join(import.meta.dirname, 'resources/decp-2026.json'))
-  //   const { sendFlattenData } = await import('../lib/upload.ts')
-  //   await sendFlattenData(mappingMarche, 'marches.marche', mockData, 'vv5hlmbnqhs1eqk1ttgbpxe9', context)
-  // })
+  it('send flatten data to data fair (marché)', async function () {
+    // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
+    const context = testUtils.context({
+      processingConfig: {
+        datasetMode: 'create',
+        dataset: { title: 'decp' },
+      },
+      tmpDir: 'data',
+      processingId: 'vv5hlmbnqhs1eqk1ttgbpxe9/'
+    }, config, false)
+    const mockData = (path.join(import.meta.dirname, 'resources/decp-2026.json'))
+    const { sendFlattenData } = await import('../lib/upload.ts')
+    await sendFlattenData(mappingMarche, 'marches.marche', mockData, 'vv5hlmbnqhs1eqk1ttgbpxe9', context)
+  })
 
   // it('send flatten dataDoublon to data fair', async function () {
   //   // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
@@ -268,21 +269,3 @@ describe('DECP processing', () => {
   //   await upload(context, 'b1w5di5y95wj9j-o1s1m2lrw', json)
   // })
 })
-
-async function compterMarches (cheminFichier: string, filter: string) {
-  let compteur = 0
-
-  return new Promise((resolve, reject) => {
-    const pipeline = chain([
-      fs.createReadStream(cheminFichier),
-      parser(),
-      pick({ filter: `${filter}` }),
-      streamArray()
-    ])
-    pipeline.on('data', () => {
-      compteur++
-    })
-    pipeline.on('end', () => resolve(compteur))
-    pipeline.on('error', reject)
-  })
-}
