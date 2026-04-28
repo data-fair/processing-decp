@@ -4,7 +4,7 @@ import { pick } from 'stream-json/filters/pick.js'
 import { streamArray } from 'stream-json/streamers/stream-array.js'
 import fs from 'fs-extra'
 
-export const countContrat = async (cheminFichier: string, filter: string) => {
+export const countContract = async (cheminFichier: string, filter: string) => {
   let compteur: number = 0
 
   return new Promise<number>((resolve, reject) => {
@@ -18,6 +18,12 @@ export const countContrat = async (cheminFichier: string, filter: string) => {
       compteur++
     })
     pipeline.on('end', () => resolve(compteur))
-    pipeline.on('error', reject)
+    pipeline.on('error', (err) => {
+      if (err.message === 'Top-level object should be an array.') {
+        resolve(0)
+      } else {
+        reject(err)
+      }
+    })
   })
 }

@@ -97,31 +97,12 @@ const getValueByPath = (obj: any, path: string): any => {
 }
 
 // ----- old code ------------
-export const writeCsv = async (jsonPath: string, destDir: string) => {
-  const csvPath = path.join(destDir, 'result_flatten.csv')
-  const data: any[] = await fs.readJson(jsonPath)
-
-  const headers = Object.keys(data[0])
-  const rows = data.map(obj =>
-    headers.map(h => {
-      const val = obj[h] !== null && obj[h] !== undefined ? obj[h] : ''
-      return typeof val === 'string' && (val.includes(';') || val.includes('"'))
-        ? `"${val.replace(/"/g, '""')}"`
-        : val
-    }).join(';')
-  )
-
-  await fs.writeFile(csvPath, '\uFEFF' + [headers.join(';'), ...rows].join('\n'), 'utf-8')
-  return csvPath
-}
-
 export const writeFlattenData = async (readFilePath: string, mapping: any[], filter: string, destDir: string, desFile: string, log: ProcessingContext['log']) => {
   log.step('Lancement du processus d\'applatissement')
   const tmpPath = path.join(destDir, desFile)
   log.info('fichier de destination : ' + tmpPath)
   let increment = 0
   await fs.ensureDir(destDir)
-  // TODO découper des brique dans mon data
   return new Promise<string>((resolve, reject) => {
     const writeStream = fs.createWriteStream(tmpPath)
     const pipeline = chain([
@@ -133,7 +114,7 @@ export const writeFlattenData = async (readFilePath: string, mapping: any[], fil
       (data: any) => {
         try {
           increment++
-          const result = flattenData(data.value, mapping, increment, log)
+          const result = flattenData(data.value, mapping, log)
           if (increment === 1) log.info('Premier objet transformé avec succès')
           return result ?? undefined // undefined = ignoré par stream-chain
         } catch (err : any) {

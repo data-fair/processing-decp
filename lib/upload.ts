@@ -5,7 +5,7 @@ import { chain } from 'stream-chain'
 import { parser } from 'stream-json'
 import { pick } from 'stream-json/filters/pick.js'
 import { streamArray } from 'stream-json/streamers/stream-array.js'
-import { countContrat } from './utils.ts'
+import { countContract } from './utils.ts'
 import { Writable, Transform } from 'stream'
 import { flattenData } from './convert.ts'
 
@@ -33,12 +33,13 @@ export const upload = async (context: ProcessingContext<ProcessingConfig>, datas
 export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
   const { log, axios } = context
   log.step('Début : Envoie des données')
-  const count: number = await countContrat(readFilePath, filtre)
+  const count: number = await countContract(readFilePath, filtre)
+  if (count === 0) return
   log.warning('total : ' + count)
   const divisor = count / 100
   const MAX_BATCH_BYTES = 5 * 1024 * 1024 // 5 MB par exemple
   const sender = new WritableSender(axios, datasetId, log, divisor)
-  const batcher = new Batcher(MAX_BATCH_BYTES, log)
+  const batcher = new Batcher(MAX_BATCH_BYTES)
   const flatten = new FlattenTransform(mapping, log)
   await new Promise<void>((resolve, reject) => {
     const pipeline = chain([
@@ -57,11 +58,62 @@ export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath:
   return sender.dataset
 }
 
+export const getAndSendAttachment = async (
+  url: string,
+  mapping: any[],
+  filtre: any,
+  datasetId: string,
+  context: ProcessingContext<ProcessingConfig>
+) => {
+  const { log, axios } = context
+  log.step('Début : Téléchargement et envoi des données')
+
+  const opts: any = { responseType: 'stream', maxRedirects: 4 }
+
+  let res
+  try {
+    res = await axios.get(url, opts)
+  } catch (err: any) {
+    if (err.response?.status === 404) throw new FileNotFoundError(`File not found: ${url}`)
+    throw err
+  }
+
+  const MAX_BATCH_BYTES = 5 * 1024 * 1024
+  // divisor à 1 car on n'a pas de count à l'avance (stream direct)
+  const sender = new WritableSender(axios, datasetId, log, 1)
+  const batcher = new Batcher(MAX_BATCH_BYTES)
+  const flatten = new FlattenTransform(mapping, log)
+
+  await new Promise<void>((resolve, reject) => {
+    const pipe = chain([
+      res.data,           // Stream HTTP direct, plus de lecture disque
+      parser(),
+      pick({ filter: filtre }),
+      streamArray(),
+      flatten,
+      batcher,
+    ])
+    pipe.pipe(sender)
+    pipe.on('error', reject)
+    sender.on('finish', resolve)
+    sender.on('error', reject)
+  })
+
+  return sender.dataset
+}
+
+class FileNotFoundError extends Error {
+  constructor (message: string) {
+    super(message)
+    this.name = 'FileNotFoundError'
+  }
+}
+
 class FlattenTransform extends Transform {
   private readonly mapping: any[]
   private log: any
 
-  constructor (mapping: any[], log: any) {
+  constructor (mapping: any[], log: ProcessingContext['log']) {
     super({ objectMode: true })
     this.mapping = mapping
     this.log = log
@@ -82,12 +134,10 @@ class Batcher extends Transform {
   private batch: any[] = []
   private batchBytes: number = 0
   private readonly maxBytes: number
-  private log: any
 
-  constructor (maxBytes: number, log: any) {
+  constructor (maxBytes: number) {
     super({ objectMode: true })
     this.maxBytes = maxBytes
-    this.log = log
   }
 
   _transform (item: any, _encoding: string, callback: Function) {
@@ -117,7 +167,7 @@ class WritableSender extends Writable {
   public increment: number = 0
   public dataset: any
 
-  constructor (axios: any, datasetId: string, log: any, divisor: number) {
+  constructor (axios: any, datasetId: string, log: ProcessingContext['log'], divisor: number) {
     super({ objectMode: true })
     this.axios = axios
     this.datasetId = datasetId
@@ -126,8 +176,6 @@ class WritableSender extends Writable {
   }
 
   private async sendWithRetry (batch: any[]): Promise<any> {
-    const TIMEOUT_MS = 10 * 60 * 1000  // 10 minutes
-
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
@@ -137,7 +185,6 @@ class WritableSender extends Writable {
           data: JSON.stringify(batch),
           headers: { 'content-type': 'application/json' },
           maxBodyLength: Infinity,
-          timeout: TIMEOUT_MS
         })
         return response.data
       } catch (err: any) {
@@ -171,7 +218,6 @@ class WritableSender extends Writable {
       this.dataset = await this.sendWithRetry(batch)
       this.log.info(Math.round(this.increment / this.divisor) + '% des fichiers chargés')
       this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
-      await new Promise(resolve => setTimeout(resolve, 10000))
       callback()
     } catch (err) {
       callback(err)

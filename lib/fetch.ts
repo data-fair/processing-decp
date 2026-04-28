@@ -4,6 +4,7 @@ import type { ProcessingConfig } from '../types/processingConfig/index.ts'
 import fs from 'fs-extra'
 import { pipeline } from 'node:stream/promises'
 import path from 'node:path'
+import dayjs from 'dayjs'
 
 class FileNotFoundError extends Error {
   constructor (message: string) {
@@ -55,5 +56,27 @@ export const getAttachement = async (url: string, tmpDir: string, axios: Process
     return tmpPath
   } catch (err: any) {
     throw new Error(`Échec de l'écriture sur le disque : ${err.message}`)
+  }
+}
+
+// ============ Source API DECP ==============
+
+export const getDailyAttachement = async (date:string, context: ProcessingContext<ProcessingConfig>) => {
+  const { axios, log, processingConfig } = context
+  const { url } = processingConfig
+  log.step('Search files by date of api decp')
+  if (!url) {
+    throw new Error('URL is missing in processingConfig')
+  }
+  try {
+    const { data } = await axios.get(url)
+
+    const res = data.resources.filter((r: any) => dayjs(r.last_modified).format('YYYY-MM-DD') === date).map((r: any) => {
+      return r.latest
+    })
+    return res
+  } catch (err: any) {
+    if (err.response?.status === 404) throw new FileNotFoundError(`File not found: ${url}`)
+    throw err
   }
 }
