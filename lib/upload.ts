@@ -58,57 +58,6 @@ export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath:
   return sender.dataset
 }
 
-export const getAndSendAttachment = async (
-  url: string,
-  mapping: any[],
-  filtre: any,
-  datasetId: string,
-  context: ProcessingContext<ProcessingConfig>
-) => {
-  const { log, axios } = context
-  log.step('Début : Téléchargement et envoi des données')
-
-  const opts: any = { responseType: 'stream', maxRedirects: 4 }
-
-  let res
-  try {
-    res = await axios.get(url, opts)
-  } catch (err: any) {
-    if (err.response?.status === 404) throw new FileNotFoundError(`File not found: ${url}`)
-    throw err
-  }
-
-  const MAX_BATCH_BYTES = 5 * 1024 * 1024
-  // divisor à 1 car on n'a pas de count à l'avance (stream direct)
-  const sender = new WritableSender(axios, datasetId, log, 1)
-  const batcher = new Batcher(MAX_BATCH_BYTES)
-  const flatten = new FlattenTransform(mapping, log)
-
-  await new Promise<void>((resolve, reject) => {
-    const pipe = chain([
-      res.data,           // Stream HTTP direct, plus de lecture disque
-      parser(),
-      pick({ filter: filtre }),
-      streamArray(),
-      flatten,
-      batcher,
-    ])
-    pipe.pipe(sender)
-    pipe.on('error', reject)
-    sender.on('finish', resolve)
-    sender.on('error', reject)
-  })
-
-  return sender.dataset
-}
-
-class FileNotFoundError extends Error {
-  constructor (message: string) {
-    super(message)
-    this.name = 'FileNotFoundError'
-  }
-}
-
 class FlattenTransform extends Transform {
   private readonly mapping: any[]
   private log: any
@@ -164,46 +113,87 @@ class WritableSender extends Writable {
   private readonly datasetId: string
   private readonly log: any
   private readonly divisor: number
+  private readonly delayBetweenBatches: number
+  private readonly startFromBatch: number
   public increment: number = 0
   public dataset: any
+  private abortController: AbortController | null = null
 
-  constructor (axios: any, datasetId: string, log: ProcessingContext['log'], divisor: number) {
+  constructor (
+    axios: any,
+    datasetId: string,
+    log: ProcessingContext['log'],
+    divisor: number,
+    options: { delayMs?: number; startFromBatch?: number } = {}
+  ) {
     super({ objectMode: true })
     this.axios = axios
     this.datasetId = datasetId
     this.log = log
     this.divisor = divisor
+    this.delayBetweenBatches = options.delayMs ?? 0
+    this.startFromBatch = options.startFromBatch ?? 0
+  }
+
+  /** Annule la requête en cours et stoppe le stream */
+  abort () {
+    this.log.warning(`Annulation demandée au batch ${this.batchIndex}`)
+    this.abortController?.abort()
+    this.destroy(new Error(`ABORTED_AT_BATCH:${this.batchIndex}`))
+  }
+
+  /** Index du dernier batch envoyé avec succès — à persister si besoin de reprise */
+  get lastSuccessfulBatch () {
+    return this.batchIndex - 1
+  }
+
+  private delay (ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   private async sendWithRetry (batch: any[]): Promise<any> {
     for (let attempt = 1; attempt <= 2; attempt++) {
+      this.abortController = new AbortController()
+
+      // Timeout de 10 minutes
+      const timeoutId = setTimeout(() => this.abortController!.abort(), 10 * 60 * 1000)
+
       try {
         this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
+
         const response = await this.axios({
           method: 'post',
           url: 'api/v1/datasets/' + this.datasetId + '/_bulk_lines',
           data: JSON.stringify(batch),
           headers: { 'content-type': 'application/json' },
           maxBodyLength: Infinity,
+          signal: this.abortController.signal
         })
+
+        clearTimeout(timeoutId)
         return response.data
       } catch (err: any) {
-        const isTimeout = err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED'
+        clearTimeout(timeoutId)
 
-        if (attempt === 1 && isTimeout) {
-          // Premier timeout — on réessaie
+        const isTimeout = err.code === 'ECONNABORTED' ||
+          err.code === 'ERR_CANCELED' ||
+          err.name === 'AbortError' ||
+          err.name === 'CanceledError'
+
+        // Annulation explicite (via abort()) — on remonte sans retry
+        if (err.message?.startsWith('ABORTED_AT_BATCH:')) throw err
+
+        if (isTimeout && attempt === 1) {
           this.log.warning(`Batch ${this.batchIndex} — pas de réponse après 10min, nouvelle tentative...`)
           continue
         }
 
-        if (attempt === 2 && isTimeout) {
-          // Deuxième timeout — on coupe
+        if (isTimeout && attempt === 2) {
           const message = `Batch ${this.batchIndex} — serveur non disponible après 20min, arrêt du processus`
           this.log.error(message)
           throw new Error(message)
         }
 
-        // Autre erreur (réseau, 500...) — on coupe immédiatement
         this.log.error(`Batch ${this.batchIndex} — erreur inattendue : ${err.message}`)
         throw err
       }
@@ -212,15 +202,97 @@ class WritableSender extends Writable {
 
   async _write (batch: any[], _encoding: string, callback: Function) {
     this.batchIndex++
+
+    // Reprise : on saute les batchs déjà envoyés
+    if (this.batchIndex <= this.startFromBatch) {
+      this.log.info(`Batch ${this.batchIndex} — ignoré (reprise depuis ${this.startFromBatch})`)
+      this.increment += batch.length
+      return callback()
+    }
+
     this.log.info(`Envoi batch ${this.batchIndex} (${batch.length} objets)`)
     this.increment += batch.length
+
     try {
       this.dataset = await this.sendWithRetry(batch)
       this.log.info(Math.round(this.increment / this.divisor) + '% des fichiers chargés')
       this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
+
+      if (this.delayBetweenBatches > 0) {
+        await this.delay(this.delayBetweenBatches)
+      }
+
       callback()
     } catch (err) {
       callback(err)
     }
   }
 }
+
+// ======= Simplest version ===========
+// class WritableSender extends Writable {
+//   private batchIndex: number = 0
+//   private readonly axios: ProcessingContext['axios']
+//   private readonly datasetId: string
+//   private readonly log: ProcessingContext['log']
+//   private readonly divisor: number
+//   public increment: number = 0
+//   public dataset: any
+
+//   constructor (axios: ProcessingContext['axios'], datasetId: string, log: ProcessingContext['log'], divisor: number) {
+//     super({ objectMode: true })
+//     this.axios = axios
+//     this.datasetId = datasetId
+//     this.log = log
+//     this.divisor = divisor
+//   }
+
+//   private async sendWithRetry (batch: any[]): Promise<any> {
+//     for (let attempt = 1; attempt <= 2; attempt++) {
+//       try {
+//         this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
+//         const response = await this.axios({
+//           method: 'post',
+//           url: 'api/v1/datasets/' + this.datasetId + '/_bulk_lines',
+//           data: JSON.stringify(batch),
+//           headers: { 'content-type': 'application/json' },
+//           maxBodyLength: Infinity,
+//         })
+//         return response.data
+//       } catch (err: any) {
+//         const isTimeout = err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED'
+
+//         if (attempt === 1 && isTimeout) {
+//           // Premier timeout — on réessaie
+//           this.log.warning(`Batch ${this.batchIndex} — pas de réponse après 10min, nouvelle tentative...`)
+//           continue
+//         }
+
+//         if (attempt === 2 && isTimeout) {
+//           // Deuxième timeout — on coupe
+//           const message = `Batch ${this.batchIndex} — serveur non disponible après 20min, arrêt du processus`
+//           this.log.error(message)
+//           throw new Error(message)
+//         }
+
+//         // Autre erreur (réseau, 500...) — on coupe immédiatement
+//         this.log.error(`Batch ${this.batchIndex} — erreur inattendue : ${err.message}`)
+//         throw err
+//       }
+//     }
+//   }
+
+//   async _write (batch: any[], _encoding: string, callback: Function) {
+//     this.batchIndex++
+//     this.log.info(`Envoi batch ${this.batchIndex} (${batch.length} objets)`)
+//     this.increment += batch.length
+//     try {
+//       this.dataset = await this.sendWithRetry(batch)
+//       this.log.info(Math.round(this.increment / this.divisor) + '% des fichiers chargés')
+//       this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
+//       callback()
+//     } catch (err) {
+//       callback(err)
+//     }
+//   }
+// }
