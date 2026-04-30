@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import { pipeline } from 'node:stream/promises'
 import path from 'node:path'
 import dayjs from 'dayjs'
+import { urlDecp } from './url.ts'
 
 class FileNotFoundError extends Error {
   constructor (message: string) {
@@ -14,12 +15,10 @@ class FileNotFoundError extends Error {
 }
 
 export const listAttachements = async (context: ProcessingContext<ProcessingConfig>) => {
-  const { axios, log, processingConfig } = context
-  const { url } = processingConfig
+  const { axios, log } = context
+  const url = urlDecp.DATASET_DECP_CONSOLIDES
   log.step('Search available files')
-  if (!url) {
-    throw new Error('URL is missing in processingConfig')
-  }
+
   try {
     const { data } = await axios.get(url)
     const patternYear = /^decp-\d{4}.json$/
@@ -42,7 +41,7 @@ export const getAttachement = async (url: string, tmpDir: string, axios: Process
   const tmpPath = path.join(tmpDir, 'tmp_decp.json')
 
   await fs.ensureDir(tmpDir)
-
+  console.log(`url reçu ${url}`)
   let res
   try {
     res = await axios.get(url, opts)
@@ -62,12 +61,8 @@ export const getAttachement = async (url: string, tmpDir: string, axios: Process
 // ============ Source API DECP ==============
 
 export const getDailyAttachement = async (date:string, context: ProcessingContext<ProcessingConfig>) => {
-  const { axios, log, processingConfig } = context
-  const { url } = processingConfig
-  log.step('Search files by date of api decp')
-  if (!url) {
-    throw new Error('URL is missing in processingConfig')
-  }
+  const { axios, } = context
+  const url = urlDecp.DATASET_API_DECP
   try {
     const { data } = await axios.get(url)
 

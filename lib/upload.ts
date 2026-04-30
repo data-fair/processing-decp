@@ -9,27 +9,6 @@ import { countContract } from './utils.ts'
 import { Writable, Transform } from 'stream'
 import { flattenData } from './convert.ts'
 
-// Sert pour envoyer un fichier court et déjà formater, permet des test simple mais n'est pas là pour rester
-export const upload = async (context: ProcessingContext<ProcessingConfig>, datasetId: string, json: any) => {
-  const { log, axios, processingConfig, patchConfig } = context
-  try {
-    const dataset = (await axios({
-      method: 'post',
-      url: 'api/v1/datasets/' + datasetId + '/_bulk_lines',
-      data: json,
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
-      headers: { 'content-type': 'application/json' }
-    })).data
-    await log.info(`jeu de donnée ${processingConfig.datasetMode === 'update' ? 'mis à jour' : 'créé'}, id="${dataset.id}", title="${dataset.title}"`)
-    if (processingConfig.datasetMode === 'create') {
-      await patchConfig({ datasetMode: 'update', dataset: { id: dataset.id, title: dataset.title } })
-    }
-  } catch (err) {
-    console.log(JSON.stringify(err, null, 2))
-  }
-}
-
 export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
   const { log, axios } = context
   log.step('Début : Envoie des données')
@@ -228,71 +207,3 @@ class WritableSender extends Writable {
     }
   }
 }
-
-// ======= Simplest version ===========
-// class WritableSender extends Writable {
-//   private batchIndex: number = 0
-//   private readonly axios: ProcessingContext['axios']
-//   private readonly datasetId: string
-//   private readonly log: ProcessingContext['log']
-//   private readonly divisor: number
-//   public increment: number = 0
-//   public dataset: any
-
-//   constructor (axios: ProcessingContext['axios'], datasetId: string, log: ProcessingContext['log'], divisor: number) {
-//     super({ objectMode: true })
-//     this.axios = axios
-//     this.datasetId = datasetId
-//     this.log = log
-//     this.divisor = divisor
-//   }
-
-//   private async sendWithRetry (batch: any[]): Promise<any> {
-//     for (let attempt = 1; attempt <= 2; attempt++) {
-//       try {
-//         this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
-//         const response = await this.axios({
-//           method: 'post',
-//           url: 'api/v1/datasets/' + this.datasetId + '/_bulk_lines',
-//           data: JSON.stringify(batch),
-//           headers: { 'content-type': 'application/json' },
-//           maxBodyLength: Infinity,
-//         })
-//         return response.data
-//       } catch (err: any) {
-//         const isTimeout = err.code === 'ECONNABORTED' || err.code === 'ERR_CANCELED'
-
-//         if (attempt === 1 && isTimeout) {
-//           // Premier timeout — on réessaie
-//           this.log.warning(`Batch ${this.batchIndex} — pas de réponse après 10min, nouvelle tentative...`)
-//           continue
-//         }
-
-//         if (attempt === 2 && isTimeout) {
-//           // Deuxième timeout — on coupe
-//           const message = `Batch ${this.batchIndex} — serveur non disponible après 20min, arrêt du processus`
-//           this.log.error(message)
-//           throw new Error(message)
-//         }
-
-//         // Autre erreur (réseau, 500...) — on coupe immédiatement
-//         this.log.error(`Batch ${this.batchIndex} — erreur inattendue : ${err.message}`)
-//         throw err
-//       }
-//     }
-//   }
-
-//   async _write (batch: any[], _encoding: string, callback: Function) {
-//     this.batchIndex++
-//     this.log.info(`Envoi batch ${this.batchIndex} (${batch.length} objets)`)
-//     this.increment += batch.length
-//     try {
-//       this.dataset = await this.sendWithRetry(batch)
-//       this.log.info(Math.round(this.increment / this.divisor) + '% des fichiers chargés')
-//       this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
-//       callback()
-//     } catch (err) {
-//       callback(err)
-//     }
-//   }
-// }

@@ -2,51 +2,41 @@
   "type": "object",
   "layout": "tabs",
   "required": [
-    "datasetMode",
-    "url"
+    "datasetMode"
   ],
   "allOf": [
     {
       "title": "Jeu de données",
       "default": {
         "datasetMode": "create",
-        "dataset": {
-          "id": "",
-          "title": "DECP"
-        }
+        "datasetTitle": "DECP"
       },
-      "oneOf": [
+       "oneOf": [
         {
           "title": "Créer un jeu de données",
-          "required": [
-            "dataset"
-          ],
+          "required": ["datasetTitle"],
           "properties": {
             "datasetMode": {
               "type": "string",
               "const": "create",
               "title": "Action"
             },
-            "dataset": {
-              "type": "object",
-              "required": [
-                "title"
-              ],
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "title": "Titre",
-                  "default": "DECP"
-                }
-              }
+            "datasetTitle": {
+              "type": "string",
+              "title": "Titre du jeu de données à créer",
+              "default": "DECP"
+            },
+            "initializeDataset": {
+              "type": "boolean",
+              "title": "Initialiser le jeu de donnée",
+              "description": "Récupère tous les decp annuels de data.gouv",
+              "default": true
             }
           }
         },
         {
           "title": "Mettre à jour un jeu de données",
-          "required": [
-            "dataset"
-          ],
+          "required": ["dataset"],
           "properties": {
             "datasetMode": {
               "type": "string",
@@ -78,16 +68,6 @@
           }
         }
       ]
-    },
-    {
-      "title": "Source des données",
-      "properties": {
-        "url": {
-          "title": "URL source",
-          "type": "string",
-          "description": "les protocoles supportés sont HTTP et HTTPS"
-        }
-      }
     }
   ]
 }

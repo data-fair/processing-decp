@@ -1,21 +1,8 @@
-// import mapping from './mapping_decp.json' with { type: 'json' }
 import type { ProcessingContext } from '@data-fair/lib-common-types/processings.js'
 
-import fs from 'fs-extra'
-import path from 'node:path'
-import { chain } from 'stream-chain'
-import { parser } from 'stream-json'
-import { pick } from 'stream-json/filters/pick.js'
-import { streamArray } from 'stream-json/streamers/stream-array.js'
-import { disassembler } from 'stream-json/disassembler.js'
-import stringer from 'stream-json/stringer.js'
-
-// Maintenant le mapping est renseigné dans les paramètres pour faire le choix entre plusieurs types de mapping
 export const flattenData = (data: any, mapping: any[], log: ProcessingContext['log']) => {
-  // log.info('flatten data : ' + increment)
   if (!data) return {}
   const newData: any = buildEmptyRecord(mapping)
-  // newData['idcontrat'] = increment
 
   mapping.forEach(item => {
     const value = getValueByPath(data, item.path)
@@ -94,44 +81,4 @@ const getValueByPath = (obj: any, path: string): any => {
     }
   }
   return current
-}
-
-// ----- old code ------------
-export const writeFlattenData = async (readFilePath: string, mapping: any[], filter: string, destDir: string, desFile: string, log: ProcessingContext['log']) => {
-  log.step('Lancement du processus d\'applatissement')
-  const tmpPath = path.join(destDir, desFile)
-  log.info('fichier de destination : ' + tmpPath)
-  let increment = 0
-  await fs.ensureDir(destDir)
-  return new Promise<string>((resolve, reject) => {
-    const writeStream = fs.createWriteStream(tmpPath)
-    const pipeline = chain([
-      fs.createReadStream(readFilePath),
-      parser(),
-      pick({ filter: `${filter}` }),
-      streamArray(),
-
-      (data: any) => {
-        try {
-          increment++
-          const result = flattenData(data.value, mapping, log)
-          if (increment === 1) log.info('Premier objet transformé avec succès')
-          return result ?? undefined // undefined = ignoré par stream-chain
-        } catch (err : any) {
-          log.error(`Erreur sur un objet : ${err.message}`)
-          return undefined
-        }
-      },
-      disassembler(),
-      stringer({ makeArray: true }),
-      writeStream
-
-    ])
-
-    writeStream.on('close', () => resolve(tmpPath))
-
-    pipeline.on('error', (err) => {
-      reject(new Error(`Échec de la lecture/traitement : ${err.message}`))
-    })
-  })
 }
