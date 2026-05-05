@@ -11,10 +11,12 @@
         "datasetMode": "create",
         "datasetTitle": "DECP"
       },
-       "oneOf": [
+      "oneOf": [
         {
           "title": "Créer un jeu de données",
-          "required": ["datasetTitle"],
+          "required": [
+            "datasetTitle"
+          ],
           "properties": {
             "datasetMode": {
               "type": "string",
@@ -26,17 +28,34 @@
               "title": "Titre du jeu de données à créer",
               "default": "DECP"
             },
+            "datasetFilterCreate": {
+              "type": "string",
+              "title": "Flitrage DECP",
+              "default": "Tout",
+              "enum": [
+                "Tout",
+                "Marché",
+                "Concession"
+              ],
+              "enumNames": [
+                "all",
+                "marche",
+                "concession"
+              ]
+            },
             "initializeDataset": {
               "type": "boolean",
               "title": "Initialiser le jeu de donnée",
-              "description": "Récupère tous les decp annuels de data.gouv",
+              "description": "Récupère le decp global de data.gouv",
               "default": true
             }
           }
         },
         {
           "title": "Mettre à jour un jeu de données",
-          "required": ["dataset"],
+          "required": [
+            "dataset"
+          ],
           "properties": {
             "datasetMode": {
               "type": "string",
@@ -57,13 +76,26 @@
               },
               "layout": {
                 "getItems": {
-                  "url": "${context.dataFairUrl}/api/v1/datasets?select=id,title&${context.ownerFilter}&raw=true",
+                  "url": "${context.dataFairUrl}/api/v1/datasets?select=id,title&${context.ownerFilter}&raw=true&rest=true",
                   "qSearchParam": "q",
-                  "itemsResults": "results",
+                  "itemsResults": "data.results",
                   "itemTitle": "item.title",
                   "itemKey": "item.id"
                 }
               }
+            },
+            "datasetFilterUpdate": {
+              "type": "string",
+              "title": "Flitrage DECP",
+              "default": "Marché",
+              "enum": [
+                "Marché",
+                "Concession"
+              ],
+              "enumNames": [
+                "marche",
+                "concession"
+              ]
             }
           }
         }
