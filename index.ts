@@ -22,6 +22,23 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
   const filtersMarche = ['marches.marche']
   const primaryKeyConcession = ['id', 'valeurglobal', 'autoriteconcedanteid', 'concessionnairessiret', 'objet']
   const primaryKeyMarche = ['id', 'montant', 'acheteurid', 'titulairesiret', 'objet']
+  const extensions = [
+    {
+      active: true,
+      type: 'remoteService',
+      remoteService: 'koumoul-com-dataset-sirene',
+      action: 'masterData_bulkSearch_siret-infos',
+      select: [
+        'denominationUniteLegale',
+        '_siret_coords.y_latitude',
+        '_siret_coords.x_longitude',
+        '_infos_commune.code_departement',
+        '_infos_commune.code_region'
+      ],
+      overwrite: {},
+      propertyPrefix: '_siret_infos'
+    }
+  ]
 
   if (create) {
     const titleBase = processingConfig.datasetTitle as string
@@ -33,16 +50,19 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
     await log.info(`Filtre concession : "${marcheConcession}"`)
 
     // Filtrer la concessions
-    if (mappingConcession) {
+    if (marcheConcession) {
       const title = titleBase + ' (concession)'
+
       const dataset = (await axios.post('api/v1/datasets', {
         title,
         isRest: true,
         schema: datasetSchemaConcession,
         primaryKey: primaryKeyConcession,
+        extensions,
         extras: { processingId }
       })).data
       await log.info(`Dataset created, id="${dataset.id}", title="${dataset.title}"`)
+      await log.info('Dataset créé/récupéré avec extensions:', dataset.extensions)
       context.processingId = dataset.id
       if (initialize) {
         // await initializeWithAnnualDecp(mappingConcession, filtersConcession, context)
@@ -51,20 +71,23 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
         log.info('Aucune initialisation requise')
       }
     }
-    if (mappingMarche) {
+
+    if (marcheFilter) {
       const title = titleBase + ' (marché)'
+
       const dataset = (await axios.post('api/v1/datasets', {
         title,
         isRest: true,
         schema: datasetSchemaMarche,
         primaryKey: primaryKeyMarche,
+        extensions,
         extras: { processingId }
       })).data
       await log.info(`Dataset created, id="${dataset.id}", title="${dataset.title}"`)
       context.processingId = dataset.id
       if (initialize) {
         // await initializeWithAnnualDecp(mapping, filtersMarche, context)
-        await initializeWithGlobalDecp(mapping, filtersMarche, urlDecp.DECP_GLOBAL, context)
+        await initializeWithGlobalDecp(mappingMarche, filtersMarche, urlDecp.DECP_GLOBAL, context)
       } else {
         log.info('Aucune initialisation requise')
       }

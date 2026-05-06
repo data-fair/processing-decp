@@ -14,19 +14,19 @@ class FileNotFoundError extends Error {
   }
 }
 
-export const listAttachements = async (context: ProcessingContext<ProcessingConfig>) => {
+export const listAttachements = async (context: ProcessingContext<ProcessingConfig>, regex: RegExp) => {
   const { axios, log } = context
   const url = urlDecp.DATASET_DECP_CONSOLIDES
   log.step('Search available files')
 
   try {
     const { data } = await axios.get(url)
-    const patternYear = /^decp-\d{4}.json$/
 
-    const res = data.resources.filter((r: any) => r.title.match(patternYear)).map((r: any) => {
+    const res = data.resources.filter((r: any) => r.title.match(regex)).map((r: any) => {
       return {
         title: r.title,
-        url: r.latest || r.url
+        url: r.latest || r.url,
+        date: r.last_modified
       }
     })
     return res
