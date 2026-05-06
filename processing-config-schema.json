@@ -31,16 +31,20 @@
             "datasetFilterCreate": {
               "type": "string",
               "title": "Flitrage DECP",
-              "default": "Tout",
-              "enum": [
-                "Tout",
-                "Marché",
-                "Concession"
-              ],
-              "enumNames": [
-                "all",
-                "marche",
-                "concession"
+              "default": "all",
+              "oneOf": [
+                {
+                  "const": "all",
+                  "title": "Tout"
+                },
+                {
+                  "const": "marche",
+                  "title": "Marché"
+                },
+                {
+                  "const": "concession",
+                  "title": "Concession"
+                }
               ]
             },
             "initializeDataset": {
@@ -87,14 +91,16 @@
             "datasetFilterUpdate": {
               "type": "string",
               "title": "Flitrage DECP",
-              "default": "Marché",
-              "enum": [
-                "Marché",
-                "Concession"
-              ],
-              "enumNames": [
-                "marche",
-                "concession"
+              "default": "marche",
+              "oneOf": [
+                {
+                  "const": "marche",
+                  "title": "Marché"
+                },
+                {
+                  "const": "concession",
+                  "title": "Concession"
+                }
               ]
             }
           }
