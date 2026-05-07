@@ -1,17 +1,19 @@
 import type { ProcessingConfig } from './types/processingConfig/index.ts'
 import type { ProcessingContext } from '@data-fair/lib-common-types/processings.js'
-import { initializeWithAnnualDecp, initializeWithGlobalDecp, dailyDecp } from './lib/execute.ts'
 
 import datasetSchema from './lib/schema/dataset-schema.ts'
 import datasetSchemaMarche from './lib/schema/dataset-schema-marche.ts'
 import datasetSchemaConcession from './lib/schema/dataset-schema-concession.ts'
 import dayjs from 'dayjs'
 import { urlDecp } from './lib/url.ts'
+import { initializeWithAnnualDecp, initializeWithGlobalDecp, dailyDecp } from './lib/execute.ts'
 
 // List of mapping available
 import mapping from './lib/mapping/mapping_decp.json' with { type: 'json' }
 import mappingMarche from './lib/mapping/mapping_decp_marche.json' with { type: 'json' }
 import mappingConcession from './lib/mapping/mapping_decp_concession.json' with { type: 'json' }
+
+type DatasetRef = { id: string, title: string }
 
 export const run = async (context: ProcessingContext<ProcessingConfig>) => {
   const { processingConfig, log, axios, processingId } = context
@@ -98,6 +100,11 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
     const marcheFilter = processingConfig.datasetFilterUpdate === 'marche'
     const marcheConcession = processingConfig.datasetFilterUpdate === 'concession'
     const date = processingConfig._overrideDate as string ?? dayjs().format('YYYY-MM-DD')
+    // récupération de l'id du jeu de donnée
+    const ref = processingConfig.datasets as DatasetRef
+    context.processingId = ref.id
+    log.step(`Checking dataset "${ref.title || ref.id}"`)
+
     if (marcheFilter) {
       await dailyDecp(mappingMarche, filtersMarche, date, context)
     }
