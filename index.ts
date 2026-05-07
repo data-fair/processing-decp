@@ -13,10 +13,8 @@ import mapping from './lib/mapping/mapping_decp.json' with { type: 'json' }
 import mappingMarche from './lib/mapping/mapping_decp_marche.json' with { type: 'json' }
 import mappingConcession from './lib/mapping/mapping_decp_concession.json' with { type: 'json' }
 
-type DatasetRef = { id: string, title: string }
-
 export const run = async (context: ProcessingContext<ProcessingConfig>) => {
-  const { processingConfig, log, axios, processingId } = context
+  const { processingConfig, log, axios, processingId, patchConfig } = context
   const create = processingConfig.datasetMode === 'create'
   const update = processingConfig.datasetMode === 'update'
   const initialize = processingConfig.initializeDataset
@@ -65,12 +63,14 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
       })).data
       await log.info(`Dataset created, id="${dataset.id}", title="${dataset.title}"`)
       await log.info('Dataset créé/récupéré avec extensions:', dataset.extensions)
-      context.processingId = dataset.id
       if (initialize) {
         // await initializeWithAnnualDecp(mappingConcession, filtersConcession, context)
-        await initializeWithGlobalDecp(mappingConcession, filtersConcession, urlDecp.DECP_GLOBAL, context)
+        await initializeWithGlobalDecp(mappingConcession, filtersConcession, urlDecp.DECP_GLOBAL, dataset.id, context)
       } else {
         log.info('Aucune initialisation requise')
+      }
+      if (!marcheFilter) {
+        await patchConfig({ datasetMode: 'update', dataset, datasets: undefined } as any)
       }
     }
 
@@ -86,30 +86,33 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
         extras: { processingId }
       })).data
       await log.info(`Dataset created, id="${dataset.id}", title="${dataset.title}"`)
-      context.processingId = dataset.id
+
       if (initialize) {
         // await initializeWithAnnualDecp(mapping, filtersMarche, context)
-        await initializeWithGlobalDecp(mappingMarche, filtersMarche, urlDecp.DECP_GLOBAL, context)
+        await initializeWithGlobalDecp(mappingMarche, filtersMarche, urlDecp.DECP_GLOBAL, dataset.id, context)
       } else {
         log.info('Aucune initialisation requise')
       }
+      await patchConfig({ datasetMode: 'update', dataset, datasets: undefined } as any)
     }
   }
 
   if (update) {
+    log.step('Lancement traitement de test')
     const marcheFilter = processingConfig.datasetFilterUpdate === 'marche'
     const marcheConcession = processingConfig.datasetFilterUpdate === 'concession'
     const date = processingConfig._overrideDate as string ?? dayjs().format('YYYY-MM-DD')
     // récupération de l'id du jeu de donnée
-    const ref = processingConfig.datasets as DatasetRef
-    context.processingId = ref.id
+    const ref = processingConfig.dataset
     log.step(`Checking dataset "${ref.title || ref.id}"`)
 
+    const datasetId = processingConfig.dataset.id as string
+
     if (marcheFilter) {
-      await dailyDecp(mappingMarche, filtersMarche, date, context)
+      await dailyDecp(mappingMarche, filtersMarche, date, datasetId, context)
     }
     if (marcheConcession) {
-      await dailyDecp(mappingConcession, filtersConcession, date, context)
+      await dailyDecp(mappingConcession, filtersConcession, date, datasetId, context)
     }
   }
 }

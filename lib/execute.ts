@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { sendFlattenData } from './upload.ts'
 
 // Importe decp global
-export const initializeWithGlobalDecp = async (mapping: any[], filters: string[], urlGlobal: string, context: ProcessingContext<ProcessingConfig>) => {
+export const initializeWithGlobalDecp = async (mapping: any[], filters: string[], urlGlobal: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
   const { log, tmpDir, axios, processingConfig } = context
   const patternGlobal = /^decp-global\.json$/  // le regex est faux
   const list: any[] = await listAttachements(context, patternGlobal)
@@ -18,13 +18,13 @@ export const initializeWithGlobalDecp = async (mapping: any[], filters: string[]
   log.info('Envoie de la donnée')
   for (const filter of filters) {
     log.info(`envoie des données du filtre ${filter}`)
-    await sendFlattenData(mapping, filter, path, context.processingId, context)
+    await sendFlattenData(mapping, filter, path, datasetId, context)
   }
   log.info('Supprimer du dossier local')
   await fs.promises.unlink(path)
   for (const date of dates) {
     log.info(`envoie des d'api decp à la date du ${date}`)
-    await dailyDecp(mapping, filters, date, context)
+    await dailyDecp(mapping, filters, date, datasetId, context)
   }
   log.step('fin de l\'initialisation')
 }
@@ -56,7 +56,7 @@ export const initializeWithAnnualDecp = async (mapping: any[], filters: string[]
   log.step('fin de l\'initialisation')
 }
 
-export const dailyDecp = async (mapping: any[], filters: string[], date: string, context: ProcessingContext<ProcessingConfig>) => {
+export const dailyDecp = async (mapping: any[], filters: string[], date: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
   const { log, tmpDir, axios } = context
   log.info(`Récupérarion de l'url du ${date}`)
   const url = await getDailyAttachement(date, context)
@@ -68,7 +68,7 @@ export const dailyDecp = async (mapping: any[], filters: string[], date: string,
   log.info('Envoie de la donnée')
   for (const filter of filters) {
     log.info(`envoie des données du filtre ${filter}`)
-    await sendFlattenData(mapping, filter, path, context.processingId, context)
+    await sendFlattenData(mapping, filter, path, datasetId, context)
   }
   log.info('Suppression du dossier local')
   await fs.promises.unlink(path)

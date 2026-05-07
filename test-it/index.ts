@@ -131,7 +131,7 @@ describe('DECP processing', () => {
     const context = testUtils.context({
       processingConfig: {
         datasetMode: 'create',
-        datasetTitle: 'decp test global',
+        datasetTitle: 'decp initialize',
         initializeDataset: true,
         datasetFilterCreate: 'concession',
         _overrideDate: '2026-04-27',
@@ -299,7 +299,7 @@ describe('DECP processing', () => {
         initializeDataset: false,
         datasetFilterUpdate: 'marche',
         _overrideDate: '2026-04-27',
-        datasets: {
+        dataset: {
           id: 'id-dataset',
           title: 'udapte-dataset'
         }
