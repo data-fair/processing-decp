@@ -7,13 +7,13 @@ import { sendFlattenData } from './upload.ts'
 
 // Importe decp global
 export const initializeWithGlobalDecp = async (mapping: any[], filters: string[], urlGlobal: string, context: ProcessingContext<ProcessingConfig>) => {
-  const { log, tmpDir, axios } = context
+  const { log, tmpDir, axios, processingConfig } = context
   const patternGlobal = /^decp-global\.json$/  // le regex est faux
   const list: any[] = await listAttachements(context, patternGlobal)
   console.log(JSON.stringify(list, null, 2))
   const lastUpdate = list[0].date
   log.warning(`Dernière mise à jour : ${lastUpdate}`)
-  const dates = getDatesFrom(lastUpdate)
+  const dates = getDatesFrom(lastUpdate, processingConfig._overrideDate as string)
   const path = await getAttachement(urlGlobal, tmpDir, axios)
   log.info('Envoie de la donnée')
   for (const filter of filters) {
@@ -75,9 +75,9 @@ export const dailyDecp = async (mapping: any[], filters: string[], date: string,
   log.step('fin de l\'initialisation')
 }
 
-const getDatesFrom = (from: string): string[] => {
+const getDatesFrom = (from: string, to?: string): string[] => {
   const start = dayjs(from).startOf('day')
-  const today = dayjs().startOf('day')
+  const today = to ? dayjs(to) : dayjs().startOf('day')
   const dates: string[] = []
 
   let current = start

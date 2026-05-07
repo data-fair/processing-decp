@@ -133,7 +133,8 @@ describe('DECP processing', () => {
         datasetMode: 'create',
         datasetTitle: 'decp test global',
         initializeDataset: true,
-        datasetFilterCreate: 'concession'
+        datasetFilterCreate: 'concession',
+        _overrideDate: '2026-04-27',
       },
       tmpDir: 'data',
       processingId: 'id-dataset'
@@ -296,11 +297,14 @@ describe('DECP processing', () => {
         datasetMode: 'update',
         datasetTitle: 'decp test title',
         initializeDataset: false,
+        datasetFilterUpdate: 'marche',
         _overrideDate: '2026-04-27',
-        datasetFilterUpdate: 'marche'
+        datasets: {
+          id: 'id-dataset',
+          title: 'udapte-dataset'
+        }
       },
       tmpDir: 'data',
-      processingId: 'id-dataset'
     }, config, false)
 
     const mockData = JSON.parse(
@@ -335,4 +339,51 @@ describe('DECP processing', () => {
 
     await decpPlugin.run(context)
   })
+
+  // ====== Envoi réel =====
+  // it('run udapte dataset', async function () {
+  //   console.log('nock interceptors:', nock.pendingMocks())
+  //   const context = testUtils.context({
+  //     processingConfig: {
+  //       datasetMode: 'update',
+  //       initializeDataset: false,
+  //       _overrideDate: '2026-04-27',
+  //       datasetFilterUpdate: 'marche'
+  //     },
+  //     tmpDir: 'data',
+  //     processingId: 'kogzgdx6d9bdv7si9ud-yw04'
+  //   }, config, false)
+
+  //   const mockData = JSON.parse(
+  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/dataset_api_decp.json'), 'utf8')
+  //   )
+  //   const mockDecp = JSON.parse(
+  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2026.json'), 'utf8')
+  //   )
+  //   nock('https://www.data.gouv.fr')
+  //     .persist()
+  //     .get('/api/1/datasets/api-decp/')
+  //     .reply(200, mockData)
+  //   nock('https://www.data.gouv.fr')
+  //     .persist()
+  //     .get('/api/1/datasets/r/519129fa-1729-4e52-80be-e1a0be99397d')
+  //     .reply(200, mockDecp)
+
+  // let bulkCallCount = 0
+  // const sentLines: any[] = []
+  // nock('https://staging-koumoul.com')
+  //   .persist()
+  //   .post('/data-fair/api/v1/datasets/id-dataset/_bulk_lines', (body) => {
+  //     bulkCallCount++
+  //     sentLines.push(...body)
+  //     return true
+  //   })
+  //   .reply(200, { nbOk: 100, nbErrors: 0 })
+
+  // await decpPlugin.run(context)
+  // assert.ok(bulkCallCount > 0, 'Devrait avoir appelé bulk_lines au moins une fois')
+  // assert.ok(sentLines.length > 0, 'Devrait avoir envoyé des lignes')
+
+  //   await decpPlugin.run(context)
+  // })
 })
