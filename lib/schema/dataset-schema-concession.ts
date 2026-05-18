@@ -28,7 +28,7 @@ export default [
     'x-originalName': 'objet',
     type: 'string',
     title: 'Objet',
-    description: 'Description succincte du contrat résumant la nature des services ou des travaux concédés (ex: exploitation d\'un réseau de chauffage, gestion d\'un camping).',
+    description: 'Description succincte du contrat résumant la nature des services ou des travaux concédés.',
     label: 'Objet',
     'x-refersTo': 'http://schema.org/description',
     'x-concept': {
@@ -92,14 +92,22 @@ export default [
     }
   },
   {
-    key: 'concessionnairessiret',
+    key: 'typeidentifiant',
+    type: 'string',
+    title: 'Type Indentifiant',
+    separator: ';',
+    description: 'Spécifie le référentiel dont est issu l\'identifiant de l\'opérateur. La valeur doit obligatoirement être l\'une des suivantes : "SIRET" (France métropolitaine/DROM), "TVA" (TVA intracommunautaire UE), "TAHITI" (Polynésie française), "RIDET" (Nouvelle-Calédonie), "FRWF" (Wallis-et-Futuna), "IREP" (Saint-Pierre-et-Miquelon) ou "HORS UE" (Entreprises hors Union Européenne). Le SIRET sera préféré toutes les fois où cela est possible',
+    label: 'Type Indentifiant'
+  },
+  {
+    key: 'concessionnairesid',
     'x-originalName': 'concessionnairessiret',
     type: 'string',
-    title: 'Concessionnaires SIRET',
+    title: 'Concessionnaires ID',
     separator: '; ',
     description: 'Identifiant unique (numéro SIRET ou équivalent pour l\'étranger) de l\'entreprise ou des entreprises attributaires de la concession.',
     'x-display': 'textarea',
-    label: 'Concessionnaires SIRET'
+    label: 'Concessionnaires ID'
   },
   {
     key: 'considerationssociales',

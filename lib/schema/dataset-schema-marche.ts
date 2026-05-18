@@ -138,11 +138,19 @@ export default [
     label: 'Type de groupement opérateurs'
   },
   {
-    key: 'titulairesiret',
+    key: 'typeidentifiant',
     type: 'string',
-    title: 'SIRET Titulaire',
+    title: 'Type Indentifiant',
     separator: ';',
-    description: 'Identifiant unique (numéro SIRET ou équivalent pour l\'étranger) du ou des opérateurs économiques attributaires et signataires du marché.',
+    description: 'Spécifie le référentiel dont est issu l\'identifiant de l\'opérateur. La valeur doit obligatoirement être l\'une des suivantes : "SIRET" (France métropolitaine/DROM), "TVA" (TVA intracommunautaire UE), "TAHITI" (Polynésie française), "RIDET" (Nouvelle-Calédonie), "FRWF" (Wallis-et-Futuna), "IREP" (Saint-Pierre-et-Miquelon) ou "HORS UE" (Entreprises hors Union Européenne). Le SIRET sera préféré toutes les fois où cela est possible',
+    label: 'Type Indentifiant'
+  },
+  {
+    key: 'idtitulaire',
+    type: 'string',
+    title: 'ID Titulaire',
+    separator: ';',
+    description: 'Identifiant unique (numéro SIRET ou équivalent pour l\'étranger) du ou des signataires du marché.',
     label: 'SIRET Titulaire'
   },
   {
@@ -150,7 +158,7 @@ export default [
     type: 'string',
     title: 'Considérations sociales',
     separator: ';',
-    description: 'Indique si le marché intègre des clauses sociales visant l\'insertion professionnelle, l\'égalité homme-femme ou le handicap. Valeurs possibles : "Clause d\'exécution", "Critère de choix", "Les deux" ou "Aucune".',
+    description: 'Indique la prise en compte des objectifs sociaux ou d\'emploi (loi Climat et Résilience / PNAD). L\'acheteur choisit une ou plusieurs valeurs parmi : "clause sociale", "critère social", "marché réservé", ou "pas de considération sociale" si le contrat n\'en comporte aucune. Utile pour le pilotage des achats durables et le SPASER.',
     label: 'Considérations sociales'
   },
   {
@@ -158,7 +166,7 @@ export default [
     type: 'string',
     title: 'Considérations environnementales',
     separator: ';',
-    description: 'Indique si le marché intègre des clauses environnementales (cycle de vie, réduction des déchets, efficacité énergétique). Valeurs possibles : "Clause d\'exécution", "Critère de choix", "Les deux" ou "Aucune".',
+    description: 'Indique l\'intégration d\'objectifs environnementaux dans le cadre de la lutte contre le dérèglement climatique et le renforcement de la résilience. L\'acheteur choisit une ou plusieurs valeurs parmi : "clause environnementale", "critère environnemental", ou "pas de considération environnementale". Donnée clé pour le suivi du PNAD et des critères écoresponsables.',
     label: 'Considérations environnementales'
   },
   {
@@ -214,6 +222,38 @@ export default [
     separator: ';',
     description: 'Nouveau montant total hors taxes (HT) du marché après application de la modification, ou montant propre de l\'avenant selon le flux.',
     label: 'Montant modification'
+  },
+  {
+    key: 'modificationtypeidentifiant',
+    type: 'string',
+    title: 'Modif : Type identifiant titulaire',
+    separator: ';',
+    description: 'Précise le référentiel de l\'identifiant du nouveau titulaire suite à la modification (SIRET, RIDET, TAFITI, etc.).',
+    label: 'Modif : Type identifiant titulaire'
+  },
+  {
+    key: 'modificationidtitulaire',
+    type: 'string',
+    title: 'Modif : Identifiant titulaire',
+    separator: ';',
+    description: 'Identifiant du nouveau titulaire suite à la modification.',
+    label: 'Modif : Identifiant titulaire'
+  },
+  {
+    key: 'modificationduree',
+    type: 'string',
+    title: 'Modif : Durée (mois)',
+    separator: ';',
+    description: 'Modification de la durée du contrat',
+    label: 'Modif : Durée (mois)'
+  },
+  {
+    key: 'modificationobjet',
+    type: 'string',
+    title: 'Modif : Objet',
+    separator: ';',
+    description: 'Modification de l\'objet du contrat',
+    label: 'Modif : Objet'
   },
   {
     key: 'source',
@@ -272,7 +312,15 @@ export default [
     label: 'Marché innovant'
   },
   {
-    key: 'soustraitantssiret',
+    key: 'soustraitanttypeidentifiant',
+    type: 'string',
+    title: 'Type Identifiant Sous-traitant',
+    separator: ';',
+    description: 'Nature de l\'identifiant fourni pour le sous-traitant (SIRET, TVA, etc.).',
+    label: 'Type Identifiant Sous-traitant'
+  },
+  {
+    key: 'soustraitantsid',
     type: 'string',
     title: 'SIRET Sous-traitants',
     separator: ';',
@@ -349,5 +397,13 @@ export default [
     separator: ';',
     description: 'Nouveau montant total hors taxes (HT) alloué au sous-traitant après prise en compte de l\'acte modificatif.',
     label: 'Montant modif acte sous-traitance'
+  },
+  {
+    key: 'modificationactesoustraitancedureemois',
+    type: 'number',
+    title: 'Modif Sous-traitance : Durée (mois)',
+    separator: ';',
+    description: 'Nouvelle durée d\'exécution de la part sous-traitée après modification de l\'acte spécial.',
+    label: 'Modif Sous-traitance : Durée (mois)'
   }
 ] as const

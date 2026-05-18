@@ -68,7 +68,11 @@
         "path": "titulaires",
         "subFields": [
             {
-                "out": "titulairesiret",
+                "out": "typeidentifiant",
+                "in": "titulaire.typeIdentifiant"
+            },
+            {
+                "out": "idtitulaire",
                 "in": "titulaire.id"
             }
         ]
@@ -112,6 +116,27 @@
             {
                 "out": "modificationmontant",
                 "in": "modification.montant"
+            },
+            {
+                "out": "modificationduree",
+                "in": "modification.dureeMois"
+            },
+            {
+                "out": "modificationobjet",
+                "in": "modification.objet"
+            },
+            {
+                "in": "titulaires",
+                "subFields": [
+                    {
+                        "out": "modificationtypeidentifiant",
+                        "in": "titulaire.typeIdentifiant"
+                    },
+                    {
+                        "out": "modificationidtitulaire",
+                        "in": "titulaire.id"
+                    }
+                ]
             }
         ]
     },
@@ -144,7 +169,11 @@
         "path": "actesSousTraitance",
         "subFields": [
             {
-                "out": "soustraitantssiret",
+                "out": "soustraitanttypeidentifiant",
+                "in": "acteSousTraitance.sousTraitant.typeIdentifiant"
+            },
+            {
+                "out": "soustraitantsid",
                 "in": "acteSousTraitance.sousTraitant.id"
             },
             {
@@ -188,6 +217,10 @@
             {
                 "out": "modificationactesoustraitancedatepublicationdonnees",
                 "in": "modificationActeSousTraitance.datePublicationDonnees"
+            },
+            {
+                "out": "modificationactesoustraitancedureemois",
+                "in": "modificationActeSousTraitance.dureeMois"
             }
         ]
     },

@@ -12,7 +12,7 @@ import pluginConfigSchema from '../plugin-config-schema.json' with { type: 'json
 import processingConfigSchema from '../processing-config-schema.json' with { type: 'json' }
 
 import { countContract } from '../lib/utils.ts'
-import mapping from '../lib/mapping/mapping_decp.json' with { type: 'json' }
+import mapping from '../lib/mapping/mapping_decp_marche.json' with { type: 'json' }
 
 describe('DECP processing', () => {
   afterEach(() => {
@@ -122,6 +122,8 @@ describe('DECP processing', () => {
     assert.equal(res.nature, 'Marché')
     assert.equal(res.considerationsenvironnementales, 'Clause environnementale ; Critère environnemental')
     assert.equal(res.considerationssociales, 'Pas de considération sociale')
+    console.log(res.idtitulaire)
+    assert.equal(res.idtitulaire, '87280339000030')
   })
 
   // ====== LANCER INDEX =====
@@ -226,69 +228,6 @@ describe('DECP processing', () => {
     assert.ok(bulkCallCount > 0, 'Devrait avoir appelé bulk_lines au moins une fois')
     assert.ok(sentLines.length > 0, 'Devrait avoir envoyé des lignes')
   })
-
-  // it('run with initialize', async function () {
-  //   const context = testUtils.context({
-  //     processingConfig: {
-  //       datasetMode: 'create',
-  //       datasetTitle: 'decp test title',
-  //       initializeDataset: true,
-  //       datasetFilterCreate: 'all'
-  //     },s
-  //     tmpDir: 'data',
-  //     processingId: 'id-dataset'
-  //   }, config, false)
-
-  //   const mockData = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/dataset_decp.json'), 'utf8')
-  //   )
-  //   const mockDecp2026 = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2026.json'), 'utf8')
-  //   )
-  //   const mockDecp2025 = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2025.json'), 'utf8')
-  //   )
-  //   const mockDecp2022 = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2022.json'), 'utf8')
-  //   )
-
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/')
-  //     .reply(200, mockData)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/2551ad40-584a-42fd-b3cc-e8906183287e')
-  //     .reply(200, mockDecp2026)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/d00a6a5a-beef-442e-8aee-5867f47a87d0')
-  //     .reply(200, mockDecp2025)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/59ba0edb-cf94-4bf1-a546-61f561553917')
-  //     .reply(200, mockDecp2022)
-
-  //   nock('https://staging-koumoul.com')
-  //     .persist()
-  //     .post('/data-fair/api/v1/datasets', () => true)
-  //     .reply(200, { id: 'id-dataset', title: 'decp test title' })
-
-  //   let bulkCallCount = 0
-  //   const sentLines: any[] = []
-  //   nock('https://staging-koumoul.com')
-  //     .persist()
-  //     .post('/data-fair/api/v1/datasets/id-dataset/_bulk_lines', (body) => {
-  //       bulkCallCount++
-  //       sentLines.push(...body)
-  //       return true
-  //     })
-  //     .reply(200, { nbOk: 100, nbErrors: 0 })
-
-  //   await decpPlugin.run(context)
-  //   assert.ok(bulkCallCount > 0, 'Devrait avoir appelé bulk_lines au moins une fois')
-  //   assert.ok(sentLines.length > 0, 'Devrait avoir envoyé des lignes')
-  // })
 
   it('run udapte dataset', async function () {
     console.log('nock interceptors:', nock.pendingMocks())

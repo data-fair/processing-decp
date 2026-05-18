@@ -126,11 +126,15 @@
         ]
     },
     {
-        "key": "concessionnairessiret",
+        "key": "concessionnaires",
         "path": "concessionnaires",
         "subFields": [
             {
-                "out": "concessionnairessiret",
+                "out": "typeidentifiant",
+                "in": "concessionnaire.typeIdentifiant"
+            },
+            {
+                "out": "concessionnairesid",
                 "in": "concessionnaire.id"
             }
         ]

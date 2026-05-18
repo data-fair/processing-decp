@@ -14,7 +14,7 @@ export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath:
   log.step('Début : Envoie des données')
   const count: number = await countContract(readFilePath, filtre)
   if (count === 0) return
-  log.warning('total : ' + count)
+  log.info('total : ' + count)
   const divisor = count / 100
   const MAX_BATCH_BYTES = 5 * 1024 * 1024 // 5 MB par exemple
   const sender = new WritableSender(axios, datasetId, log, divisor)
