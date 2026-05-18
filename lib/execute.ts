@@ -72,7 +72,7 @@ export const dailyDecp = async (mapping: any[], filters: string[], date: string,
   }
   log.info('Suppression du dossier local')
   await fs.promises.unlink(path)
-  log.step('fin de l\'initialisation')
+  log.step('fin de l\'update')
 }
 
 const getDatesFrom = (from: string, to?: string): string[] => {

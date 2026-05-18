@@ -23,10 +23,6 @@
         "key": "datepublicationdonnees",
         "path": "datePublicationDonnees"
     },
-    {
-        "key": "titulaires",
-        "path": "titulaires"
-    },
      {
         "key": "considerationssociales",
         "path": "considerationsSociales.considerationSociale"
@@ -130,11 +126,15 @@
         ]
     },
     {
-        "key": "concessionnairessiret",
+        "key": "concessionnaires",
         "path": "concessionnaires",
         "subFields": [
             {
-                "out": "concessionnairessiret",
+                "out": "typeidentifiant",
+                "in": "concessionnaire.typeIdentifiant"
+            },
+            {
+                "out": "concessionnairesid",
                 "in": "concessionnaire.id"
             }
         ]
