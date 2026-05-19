@@ -100,7 +100,7 @@ describe('DECP processing', () => {
       .reply(200, mockData)
 
     const { getAttachement } = await import('../lib/fetch.ts')
-    const jsonDecp = await getAttachement(url, tmpDir, axios)
+    const jsonDecp = await getAttachement(url, tmpDir, 'tmpFile.json', axios)
     const countMarche = await countContract(jsonDecp, 'marches.marche')
     const countConcession = await countContract(jsonDecp, 'marches.contrat-concession')
     assert.equal((countMarche + countConcession), 3803)
@@ -135,7 +135,7 @@ describe('DECP processing', () => {
         datasetMode: 'create',
         datasetTitle: 'decp initialize',
         initializeDataset: true,
-        datasetFilterCreate: 'concession',
+        datasetFilterCreate: 'marche',
         _overrideDate: '2026-04-27',
       },
       tmpDir: 'data',
@@ -154,7 +154,7 @@ describe('DECP processing', () => {
     )
 
     const mockApiDecp = JSON.parse(
-      fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2026.json'), 'utf8')
+      fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2025.json'), 'utf8')
     )
     nock('https://www.data.gouv.fr')
       .persist()
@@ -168,12 +168,12 @@ describe('DECP processing', () => {
 
     nock('https://www.data.gouv.fr')
       .persist()
-      .get('/api/1/datasets/r/00245086-fe70-42d0-a15e-ecd2120dc508')
+      .get('/api/1/datasets/r/bd33e98f-f8e3-49ba-9f26-51c95fe57234')
       .reply(200, mockDecpGlobal)
 
     nock('https://www.data.gouv.fr')
       .persist()
-      .get('/api/1/datasets/r/bd33e98f-f8e3-49ba-9f26-51c95fe57234')
+      .get('/api/1/datasets/r/00245086-fe70-42d0-a15e-ecd2120dc508')
       .reply(200, mockApiDecp)
     nock('https://www.data.gouv.fr')
       .persist()

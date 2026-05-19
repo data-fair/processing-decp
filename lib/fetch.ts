@@ -6,6 +6,7 @@ import { pipeline } from 'node:stream/promises'
 import path from 'node:path'
 import dayjs from 'dayjs'
 import { urlDecp } from './url.ts'
+import { log } from 'node:console'
 
 class FileNotFoundError extends Error {
   constructor (message: string) {
@@ -15,9 +16,8 @@ class FileNotFoundError extends Error {
 }
 
 export const listAttachements = async (context: ProcessingContext<ProcessingConfig>, regex: RegExp) => {
-  const { axios, log } = context
+  const { axios } = context
   const url = urlDecp.DATASET_DECP_CONSOLIDES
-  log.step('Search available files')
 
   try {
     const { data } = await axios.get(url)
@@ -36,12 +36,10 @@ export const listAttachements = async (context: ProcessingContext<ProcessingConf
   }
 }
 
-export const getAttachement = async (url: string, tmpDir: string, axios: ProcessingContext['axios']) => {
+export const getAttachement = async (url: string, tmpDir: string, tmpFile: string, axios: ProcessingContext['axios']) => {
   const opts: any = { responseType: 'stream', maxRedirects: 4 }
-  const tmpPath = path.join(tmpDir, 'tmp_decp.json')
-
+  const tmpPath = path.join(tmpDir, tmpFile)
   await fs.ensureDir(tmpDir)
-  console.log(`url reçu ${url}`)
   let res
   try {
     res = await axios.get(url, opts)

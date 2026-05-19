@@ -9,15 +9,16 @@ import { countContract } from './utils.ts'
 import { Writable, Transform } from 'stream'
 import { flattenData } from './convert.ts'
 
-export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
+// TODO stopper le processus si la donnée est vide
+export const sendFlattenData = async (source: string, mapping: any[], filtre: any, readFilePath: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
   const { log, axios } = context
-  log.step('Début : Envoie des données')
   const count: number = await countContract(readFilePath, filtre)
   if (count === 0) return
-  log.info('total : ' + count)
-  const divisor = count / 100
-  const MAX_BATCH_BYTES = 5 * 1024 * 1024 // 5 MB par exemple
-  const sender = new WritableSender(axios, datasetId, log, divisor)
+  await log.task(`Envoie des données du : ${source}`)
+  await log.progress(`Envoie des données du : ${source}`, 0, count)
+  const divisor = count
+  const MAX_BATCH_BYTES = 5 * 1024 * 1024 // 5 MB
+  const sender = new WritableSender(axios, datasetId, log, divisor, source)
   const batcher = new Batcher(MAX_BATCH_BYTES)
   const flatten = new FlattenTransform(mapping, log)
   await new Promise<void>((resolve, reject) => {
@@ -33,6 +34,7 @@ export const sendFlattenData = async (mapping: any[], filtre: any, readFilePath:
     pipeline.on('error', reject)
     sender.on('finish', resolve)
     sender.on('error', reject)
+    // pipeline.on('end', resolve)
   })
   return sender.dataset
 }
@@ -92,6 +94,7 @@ class WritableSender extends Writable {
   private readonly datasetId: string
   private readonly log: any
   private readonly divisor: number
+  private readonly source: string
   private readonly delayBetweenBatches: number
   private readonly startFromBatch: number
   public increment: number = 0
@@ -103,6 +106,7 @@ class WritableSender extends Writable {
     datasetId: string,
     log: ProcessingContext['log'],
     divisor: number,
+    source: string,
     options: { delayMs?: number; startFromBatch?: number } = {}
   ) {
     super({ objectMode: true })
@@ -110,6 +114,7 @@ class WritableSender extends Writable {
     this.datasetId = datasetId
     this.log = log
     this.divisor = divisor
+    this.source = source
     this.delayBetweenBatches = options.delayMs ?? 0
     this.startFromBatch = options.startFromBatch ?? 0
   }
@@ -138,7 +143,7 @@ class WritableSender extends Writable {
       const timeoutId = setTimeout(() => this.abortController!.abort(), 10 * 60 * 1000)
 
       try {
-        this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
+        // this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
 
         const response = await this.axios({
           method: 'post',
@@ -189,13 +194,15 @@ class WritableSender extends Writable {
       return callback()
     }
 
-    this.log.info(`Envoi batch ${this.batchIndex} (${batch.length} objets)`)
+    // this.log.info(`Envoi batch ${this.batchIndex} (${batch.length} objets)`)
     this.increment += batch.length
 
     try {
       this.dataset = await this.sendWithRetry(batch)
-      this.log.info(Math.round(this.increment / this.divisor) + '% des fichiers chargés')
-      this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
+      // const percent = Math.round(this.increment / this.divisor)
+      this.log.progress(`Envoie des données du : ${this.source}`, this.increment, this.divisor)
+      // this.log.info(percent + '% des fichiers chargés')
+      // this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
 
       if (this.delayBetweenBatches > 0) {
         await this.delay(this.delayBetweenBatches)
