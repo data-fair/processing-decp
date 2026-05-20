@@ -64,7 +64,7 @@
         "path": "typeGroupementOperateurs"
     },
     {
-        "key": "titulairessiret",
+        "key": "titulaires",
         "path": "titulaires",
         "subFields": [
             {

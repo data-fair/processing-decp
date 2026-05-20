@@ -82,7 +82,7 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
 
     // Filtrer la concessions
     if (marcheConcession) {
-      const primaryKeyConcession = ['id', 'valeurglobal', 'autoriteconcedanteid', 'concessionnairessiret', 'objet']
+      const primaryKeyConcession = ['id', 'valeurglobale', 'autoriteconcedanteid', 'concessionnairesid', 'objet']
       const title = titleBase + ' (concession)'
 
       const dataset = (await axios.post('api/v1/datasets', {
@@ -103,7 +103,7 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
       }
     }
     if (marcheFilter) {
-      const primaryKeyMarche = ['id', 'montant', 'acheteurid', 'titulairesiret', 'objet']
+      const primaryKeyMarche = ['id', 'montant', 'acheteurid', 'idtitulaire', 'objet']
       const extensionCPV = {
         active: true,
         type: 'remoteService',
@@ -136,6 +136,7 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
       }
       await patchConfig({ datasetMode: 'update', dataset, datasets: undefined } as any)
     }
+    if (pathDECP) await fs.promises.unlink(pathDECP)
     log.step('fin de l\'initialisation')
   }
 
