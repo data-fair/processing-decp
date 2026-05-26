@@ -34,7 +34,7 @@ Data harvested from data.gouv.fr can be enriched depending on your deployment en
 <details>
 <summary><b>Staging Configuration ('Marché' and 'Concession )</b></summary>
 
-```json
+```typescript
 extensions = [
   {
     active: true,
@@ -53,9 +53,12 @@ extensions = [
   }
 ]
 ```
+</details>
 
+<details>
 <summary><b>Koumoul Configuration ('Marché' and 'Concession' )</b></summary>
-```json
+
+```typescript
 extensions = [
       {
         active: true,
@@ -96,8 +99,12 @@ extensions = [
         propertyPrefix: '_nomenclature_des-secteurs-dachat-code-cpv'
       }
     ]
-    ```
+```
+    </details>
+
+<details>
 <summary><b>Koumoul Configuration ('Concession' )</b></summary>
+
 ```json
 extensions = [
       {
@@ -126,7 +133,7 @@ extensions = [
         propertyPrefix: '_siret_infos'
       }
     ]
-    ```
+```
 </details>
 
 ## Data Sources
