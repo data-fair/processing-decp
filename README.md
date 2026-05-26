@@ -31,27 +31,32 @@ It relies on the global historical file for initial setup, and then incrementall
 
 Data harvested from data.gouv.fr can be enriched depending on your deployment environment (Staging or Koumoul). These extensions append public entity names, geocoding information, and CPV nomenclature details (for procurement contracts).
 
-Configure the extension IDs according to the following mapping:
+<details>
+<summary><b>Staging Configuration ('Marché' and 'Concession )</b></summary>
 
-| Type | Staging Environment | Koumoul Environment |
-| --- | --- | --- |
-| **Marchés** | *extensions = [
-    //   {
-    //     active: true,
-    //     type: 'remoteService',
-    //     remoteService: 'koumoul-com-dataset-sirene',
-    //     action: 'masterData_bulkSearch_siret-infos',
-    //     select: [
-    //       'denominationUniteLegale',
-    //       '_siret_coords.y_latitude',
-    //       '_siret_coords.x_longitude',
-    //       '_infos_commune.code_departement',
-    //       '_infos_commune.code_region'
-    //     ],
-    //     overwrite: {},
-    //     propertyPrefix: '_siret_infos'
-    //   }
-    // ]* | *extensions = [
+```json
+extensions = [
+  {
+    active: true,
+    type: 'remoteService',
+    remoteService: 'koumoul-com-dataset-sirene',
+    action: 'masterData_bulkSearch_siret-infos',
+    select: [
+      'denominationUniteLegale',
+      '_siret_coords.y_latitude',
+      '_siret_coords.x_longitude',
+      '_infos_commune.code_departement',
+      '_infos_commune.code_region'
+    ],
+    overwrite: {},
+    propertyPrefix: '_siret_infos'
+  }
+]
+```
+
+<summary><b>Koumoul Configuration ('Marché' and 'Concession' )</b></summary>
+```json
+extensions = [
       {
         active: true,
         type: 'remoteService',
@@ -90,24 +95,11 @@ Configure the extension IDs according to the following mapping:
         overwrite: {},
         propertyPrefix: '_nomenclature_des-secteurs-dachat-code-cpv'
       }
-    ]* |
-| **Concession** | *extensions = [
-      {
-        active: true,
-        type: 'remoteService',
-        remoteService: 'koumoul-com-dataset-sirene',
-        action: 'masterData_bulkSearch_siret-infos',
-        select: [
-          'denominationUniteLegale',
-          '_siret_coords.y_latitude',
-          '_siret_coords.x_longitude',
-          '_infos_commune.code_departement',
-          '_infos_commune.code_region'
-        ],
-        overwrite: {},
-        propertyPrefix: '_siret_infos'
-      }
-    ]* | *extensions = [
+    ]
+    ```
+<summary><b>Koumoul Configuration ('Concession' )</b></summary>
+```json
+extensions = [
       {
         active: true,
         type: 'remoteService',
@@ -133,7 +125,9 @@ Configure the extension IDs according to the following mapping:
         overwrite: {},
         propertyPrefix: '_siret_infos'
       }
-    ]* |
+    ]
+    ```
+</details>
 
 ## Data Sources
 
