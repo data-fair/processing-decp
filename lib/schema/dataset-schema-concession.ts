@@ -5,7 +5,8 @@ export default [
     type: 'string',
     title: 'ID',
     description: 'Identifiant technique attribué par l\'autorité concédante à un contrat',
-    label: 'ID'
+    label: 'ID',
+    'x-group': 'Descriptions'
   },
   {
     key: 'nature',
@@ -13,7 +14,8 @@ export default [
     type: 'string',
     title: 'Nature',
     description: 'Correspond à l\'une des mentions suivantes : "concession de travaux", "concession de service", "concession de service public" ou "délégation de service public"',
-    label: 'Nature'
+    label: 'Nature',
+    'x-group': 'Caractéristiques'
   },
   {
     key: 'procedure',
@@ -21,7 +23,8 @@ export default [
     type: 'string',
     title: 'Procédure',
     description: 'Désigne la méthode utilisée par l\'acheteur pour attribuer un contrat. La valeur correspond à l\'une des catégories suivantes : "procédure négociée ouverte", "procédure non-négociée ouverte", "procédure négociée restreinte" ou "procédure non-négociée restreinte".',
-    label: 'Procédure'
+    label: 'Procédure',
+    'x-group': 'Caractéristiques'
   },
   {
     key: 'objet',
@@ -34,7 +37,8 @@ export default [
     'x-concept': {
       title: 'Description',
       primary: true
-    }
+    },
+    'x-group': 'Descriptions'
   },
   {
     key: 'datesignature',
@@ -49,7 +53,8 @@ export default [
       id: 'date',
       title: 'Date d\'évènement',
       primary: true
-    }
+    },
+    'x-group': 'Descriptions'
   },
   {
     key: 'datedebutexecution',
@@ -58,7 +63,8 @@ export default [
     format: 'date',
     title: 'Date Début Exécution',
     description: 'Date correspondant à la notification du contrat ou fixée contractuellement pour le démarrage effectif des prestations ou de l\'exploitation.',
-    label: 'Date Début Exécution'
+    label: 'Date Début Exécution',
+    'x-group': 'Descriptions'
   },
   {
     key: 'datepublicationdonnees',
@@ -67,7 +73,8 @@ export default [
     format: 'date',
     title: 'Date Publication',
     description: 'Date à laquelle les données initiales du contrat de concession ont été publiées sur la plateforme nationale Open Data.',
-    label: 'Date Publication'
+    label: 'Date Publication',
+    'x-group': 'Plateforme'
   },
   {
     key: 'dureemois',
@@ -75,7 +82,8 @@ export default [
     type: 'integer',
     title: 'Durée Mois',
     description: 'Durée totale prévisionnelle d\'exécution de la concession, exprimée en mois (arrondie au nombre supérieur).',
-    label: 'Durée Mois'
+    label: 'Durée Mois',
+    'x-group': 'Descriptions'
   },
   {
     key: 'autoriteconcedanteid',
@@ -89,7 +97,8 @@ export default [
       id: 'siret',
       title: 'SIRET',
       primary: true
-    }
+    },
+    'x-group': 'Acteur'
   },
   {
     key: 'typeidentifiant',
@@ -97,7 +106,8 @@ export default [
     title: 'Type Indentifiant',
     separator: ';',
     description: 'Spécifie le référentiel dont est issu l\'identifiant de l\'opérateur. La valeur doit obligatoirement être l\'une des suivantes : "SIRET" (France métropolitaine/DROM), "TVA" (TVA intracommunautaire UE), "TAHITI" (Polynésie française), "RIDET" (Nouvelle-Calédonie), "FRWF" (Wallis-et-Futuna), "IREP" (Saint-Pierre-et-Miquelon) ou "HORS UE" (Entreprises hors Union Européenne). Le SIRET sera préféré toutes les fois où cela est possible',
-    label: 'Type Indentifiant'
+    label: 'Type Indentifiant',
+    'x-group': 'Acteur'
   },
   {
     key: 'concessionnairesid',
@@ -107,7 +117,8 @@ export default [
     separator: '; ',
     description: 'Identifiant unique (numéro SIRET ou équivalent pour l\'étranger) de l\'entreprise ou des entreprises attributaires de la concession.',
     'x-display': 'textarea',
-    label: 'Concessionnaires ID'
+    label: 'Concessionnaires ID',
+    'x-group': 'Acteur'
   },
   {
     key: 'considerationssociales',
@@ -116,7 +127,8 @@ export default [
     title: 'Considérations Sociales',
     separator: '; ',
     description: 'Indique l\'intégration de critères ou clauses liés à l\'insertion professionnelle ou à l\'égalité. Valeurs possibles : "Clause d\'exécution", "Critère de choix", "Les deux" ou "Aucune".',
-    label: 'Considérations Sociales'
+    label: 'Considérations Sociales',
+    'x-group': 'Critères'
   },
   {
     key: 'considerationsenvironnementales',
@@ -125,7 +137,8 @@ export default [
     title: 'Considérations Environnementales',
     separator: '; ',
     description: 'Indique l\'intégration de critères ou clauses liés à la performance environnementale ou au développement durable. Valeurs possibles : "Clause d\'exécution", "Critère de choix", "Les deux" ou "Aucune".',
-    label: 'Considérations Environnementales'
+    label: 'Considérations Environnementales',
+    'x-group': 'Critères'
   },
   {
     key: 'valeurglobale',
@@ -133,7 +146,8 @@ export default [
     type: 'number',
     title: 'Valeur Globale',
     description: 'Estimation du chiffre d\'affaires total hors taxes (HT) que le concessionnaire devrait générer sur toute la durée du contrat',
-    label: 'Valeur Globale'
+    label: 'Valeur Globale',
+    'x-group': 'Descriptions'
   },
   {
     key: 'montantsubventionpublique',
@@ -141,7 +155,8 @@ export default [
     type: 'number',
     title: 'Montant Subvention Publique',
     description: 'Montant total hors taxes (HT) des contributions financières, subventions ou aides publiques versées par l\'autorité concédante pour équilibrer l\'exploitation.',
-    label: 'Montant Subvention Publique'
+    label: 'Montant Subvention Publique',
+    'x-group': 'Descriptions'
   },
   {
     key: 'origineue',
@@ -149,7 +164,8 @@ export default [
     type: 'number',
     title: 'Origine UE',
     description: 'Part en pourcentage des fournitures ou produits issus de pays de l\'Union Européenne mobilisés dans l\'exécution du contrat.',
-    label: 'Origine UE'
+    label: 'Origine UE',
+    'x-group': 'Critères'
   },
   {
     key: 'originefrance',
@@ -157,7 +173,8 @@ export default [
     type: 'number',
     title: 'Origine France',
     description: 'Part en pourcentage des fournitures ou produits d\'origine France mobilisés dans l\'exécution du contrat.',
-    label: 'Origine France'
+    label: 'Origine France',
+    'x-group': 'Critères'
   },
   {
     key: 'tauxavance',
@@ -165,7 +182,8 @@ export default [
     type: 'number',
     title: 'Taux Avance',
     description: 'Taux de l\'avance attribuée en pourcentage du montant initial du marché',
-    label: 'Taux Avance'
+    label: 'Taux Avance',
+    'x-group': 'Critères'
   },
   {
     key: 'modificationsid',
@@ -174,7 +192,8 @@ export default [
     title: 'Modif : ID',
     separator: '; ',
     description: 'Identifiant unique de la modification (avenant) apportée au contrat de concession initial.',
-    label: 'Modif : ID'
+    label: 'Modif : ID',
+    'x-group': 'Modifications'
   },
   {
     key: 'modificationsdureemois',
@@ -183,7 +202,8 @@ export default [
     title: 'Modif : Durée Mois',
     separator: '; ',
     description: 'Nouvelle durée totale de la concession exprimée en mois suite à l\'application de la modification (avenant de prolongation).',
-    label: 'Modif : Durée Mois'
+    label: 'Modif : Durée Mois',
+    'x-group': 'Modifications'
   },
   {
     key: 'modificationsvaleurglobale',
@@ -192,7 +212,8 @@ export default [
     title: 'Modif : Valeur Globale',
     separator: '; ',
     description: 'Nouvelle estimation de la valeur globale (CA prévisionnel) du contrat après la prise en compte de la modification.',
-    label: 'Modif : Valeur Globale'
+    label: 'Modif : Valeur Globale',
+    'x-group': 'Modifications'
   },
   {
     key: 'objetmodification',
@@ -201,7 +222,8 @@ export default [
     title: 'Modif : Objet',
     separator: '; ',
     description: 'Motif ou description succincte justifiant la modification du contrat (ex: travaux supplémentaires urgents, modification législative).',
-    label: 'Modif : Objet'
+    label: 'Modif : Objet',
+    'x-group': 'Modifications'
   },
   {
     key: 'datesignaturemodification',
@@ -211,7 +233,8 @@ export default [
     title: 'Modif : Date Signature',
     separator: '; ',
     description: 'Date de signature de l\'avenant modificatif par l\'autorité concédante et le concessionnaire.',
-    label: 'Modif : Date Signature'
+    label: 'Modif : Date Signature',
+    'x-group': 'Modifications'
   },
   {
     key: 'datepublicationdonneesmodification',
@@ -221,7 +244,8 @@ export default [
     title: 'Modif : Date Publication',
     separator: '; ',
     description: 'Date de mise en ligne et de publication des données spécifiques de cet avenant modificatif sur la plateforme nationale.',
-    label: 'Modif : Date Publication'
+    label: 'Modif : Date Publication',
+    'x-group': 'Modifications'
   },
   {
     key: 'datepublicationdonneesexecution',
@@ -231,7 +255,8 @@ export default [
     title: 'Exécution : Date Publication',
     separator: '; ',
     description: 'Date de publication des données annuelles issues du rapport d\'exécution de la concession (données mises à jour chaque année).',
-    label: 'Exécution : Date Publication'
+    label: 'Exécution : Date Publication',
+    'x-group': 'Descriptions'
   },
   {
     key: 'depensesinvestissement',
@@ -240,7 +265,8 @@ export default [
     title: 'Exécution : Dépenses Investissement',
     separator: '; ',
     description: 'Montant cumulé des dépenses d\'investissement (CAPEX) réalisées par le concessionnaire pour le compte de l\'autorité concédante au cours de l\'année écoulée.',
-    label: 'Exécution : Dépenses Investissement'
+    label: 'Exécution : Dépenses Investissement',
+    'x-group': 'Descriptions'
   },
   {
     key: 'intituletarif',
@@ -249,7 +275,8 @@ export default [
     title: 'Exécution : Intitulé Tarif',
     separator: '; ',
     description: 'Nom ou libellé de la grille tarifaire ou de la redevance appliquée aux usagers du service public concédé pour l\'année d\'exécution (ex: Tarif Usagers, Abonnement de base).',
-    label: 'Exécution : Intitulé Tarif'
+    label: 'Exécution : Intitulé Tarif',
+    'x-group': 'Descriptions'
   },
   {
     key: 'montanttarif',
@@ -258,7 +285,8 @@ export default [
     title: 'Exécution : Montant Tarif',
     separator: '; ',
     description: 'Valeur numérique ou montant lié à l\'intitulé du tarif appliqué au cours de l\'exercice d\'exécution.',
-    label: 'Exécution : Montant Tarif'
+    label: 'Exécution : Montant Tarif',
+    'x-group': 'Descriptions'
   },
   {
     key: 'source',
@@ -266,6 +294,7 @@ export default [
     type: 'string',
     title: 'Source',
     description: 'Origine de la plateforme ou de l\'application ayant généré et transmis les données du contrat',
-    label: 'Source'
+    label: 'Source',
+    'x-group': 'Plateforme'
   }
 ] as const
