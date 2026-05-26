@@ -29,12 +29,12 @@ It relies on the global historical file for initial setup, and then incrementall
 
 ## Extensions
 
-Data harvested from data.gouv.fr can be enriched depending on your deployment environment (Staging or Koumoul). These extensions append public entity names, geocoding information, and CPV nomenclature details (for procurement contracts).
+Data harvested from data.gouv.fr can be enriched depending on your deployment environment (Staging or Koumoul). These extensions append public entity names, geocoding information, and CPV nomenclature details.
 
 <details>
 <summary><b>Staging Configuration ('Marché' and 'Concession )</b></summary>
 
-```typescript
+```json
 extensions = [
   {
     active: true,
@@ -56,9 +56,9 @@ extensions = [
 </details>
 
 <details>
-<summary><b>Koumoul Configuration ('Marché' and 'Concession' )</b></summary>
+<summary><b>Koumoul Configuration ('Marché')</b></summary>
 
-```typescript
+```json
 extensions = [
       {
         active: true,
@@ -100,7 +100,7 @@ extensions = [
       }
     ]
 ```
-    </details>
+</details>
 
 <details>
 <summary><b>Koumoul Configuration ('Concession' )</b></summary>
