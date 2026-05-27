@@ -45,8 +45,8 @@ extensions = [
       'denominationUniteLegale',
       '_siret_coords.y_latitude',
       '_siret_coords.x_longitude',
-      '_infos_commune.code_departement',
-      '_infos_commune.code_region'
+      ' _infos_commune.nom_region',
+      ' _infos_commune.nom_departement'
     ],
     overwrite: {},
     propertyPrefix: '_siret_infos'
@@ -78,8 +78,8 @@ extensions = [
         remoteService: 'dataset:sirene',
         action: 'masterData_bulkSearch_siret-infos',
         select: [
-          '_infos_commune.code_departement',
-          '_infos_commune.code_region',
+          '_infos_commune.nom_region',
+          '_infos_commune.nom_departement',
           'denominationUniteLegale'
         ],
         overwrite: {},
@@ -125,8 +125,8 @@ extensions = [
         remoteService: 'dataset:sirene',
         action: 'masterData_bulkSearch_siret-infos',
         select: [
-          '_infos_commune.code_departement',
-          '_infos_commune.code_region',
+          '_infos_commune.nom_region',
+          '_infos_commune.nom_departement',
           'denominationUniteLegale'
         ],
         overwrite: {},
