@@ -8,7 +8,7 @@ It relies on the global historical file for initial setup, and then incrementall
 
 - **Dataset Separation & Flexibility** — Processes the mixed DECP source files and cleanly splits them into two distinct datasets (*marchés* and *concessions*) for maximum clarity. Users can choose to generate both datasets simultaneously or focus on just one.
 - **One-Time Initialization** — Performs a heavy initial setup by downloading and parsing the historical `decp-global.json` archive. Designed to be executed only once at setup.
-- **User-Triggered Daily Updates** — Incremental synchronization is decoupled from initialization. The user can manually trigger or schedule updates, with a strong recommendation to run them daily to fetch the latest delta files from data.gouv.fr.
+- **User-Triggered Daily Updates** — Incremental synchronization is decoupled from initialization. The user can manually trigger or schedule updates, with a strong recommendation to run them daily to fetch the latest DECP files from data.gouv.fr.
 
 ## Configuration
 
