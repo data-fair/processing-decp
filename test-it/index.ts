@@ -59,10 +59,7 @@ describe('DECP processing', () => {
 
   it('get url decp api', async function () {
     const context = testUtils.context({
-      processingConfig: {
-        datasetMode: 'create',
-        dataset: { title: 'decp' },
-      }
+      processingConfig: {}
     }, config, false)
 
     const mockData = JSON.parse(
@@ -81,17 +78,13 @@ describe('DECP processing', () => {
     const context = testUtils.context({
       tmpDir: 'data',
       pluginConfig: {},
-      processingConfig: {
-        datasetMode: 'create',
-      },
+      processingConfig: {},
     }, config, false)
 
     const { axios, tmpDir } = context
-
     const mockData = JSON.parse(
       fs.readFileSync(path.join(import.meta.dirname, 'resources/mini-decp-global.json'), 'utf8')
     )
-
     const url = 'https://www.data.gouv.fr/api/1/datasets/r/2551ad40-584a-42fd-b3cc-e8906183287e'
 
     nock('https://www.data.gouv.fr')
@@ -127,8 +120,6 @@ describe('DECP processing', () => {
 
   // ====== LANCER INDEX =====
   it('run with initialize decp (marché) ', async function () {
-    console.log('nock interceptors:', nock.pendingMocks())
-    // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
     const context = testUtils.context({
       processingConfig: {
         datasetMode: 'create',
@@ -238,8 +229,6 @@ describe('DECP processing', () => {
   })
 
   it('run with initialize decp (concession) ', async function () {
-    console.log('nock interceptors:', nock.pendingMocks())
-    // TODO paramétrer pour envoyer sur data fair avec les bons identifiants
     const context = testUtils.context({
       processingConfig: {
         datasetMode: 'create',
@@ -349,7 +338,6 @@ describe('DECP processing', () => {
   })
 
   it('run udapte dataset', async function () {
-    console.log('nock interceptors:', nock.pendingMocks())
     const context = testUtils.context({
       processingConfig: {
         datasetMode: 'update',
@@ -395,151 +383,5 @@ describe('DECP processing', () => {
     assert.ok(bulkCallCount > 0, 'Devrait avoir appelé bulk_lines au moins une fois')
     assert.ok(sentLines.length > 0, 'Devrait avoir envoyé des lignes')
     assert.strictEqual(sentLines.length, 7)
-
-    await decpPlugin.run(context)
   })
-
-  // ====== Envoi réel =====
-  // it('run udapte dataset', async function () {
-  //   console.log('nock interceptors:', nock.pendingMocks())
-  //   const context = testUtils.context({
-  //     processingConfig: {
-  //       datasetMode: 'update',
-  //       initializeDataset: false,
-  //       _overrideDate: '2026-04-27',
-  //       datasetFilterUpdate: 'marche'
-  //     },
-  //     tmpDir: 'data',
-  //     processingId: 'kogzgdx6d9bdv7si9ud-yw04'
-  //   }, config, false)
-
-  //   const mockData = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/dataset_api_decp.json'), 'utf8')
-  //   )
-  //   const mockDecp = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2026.json'), 'utf8')
-  //   )
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/api-decp/')
-  //     .reply(200, mockData)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/519129fa-1729-4e52-80be-e1a0be99397d')
-  //     .reply(200, mockDecp)
-
-  // let bulkCallCount = 0
-  // const sentLines: any[] = []
-  // nock('https://staging-koumoul.com')
-  //   .persist()
-  //   .post('/data-fair/api/v1/datasets/id-dataset/_bulk_lines', (body) => {
-  //     bulkCallCount++
-  //     sentLines.push(...body)
-  //     return true
-  //   })
-  //   .reply(200, { nbOk: 100, nbErrors: 0 })
-
-  // await decpPlugin.run(context)
-  // assert.ok(bulkCallCount > 0, 'Devrait avoir appelé bulk_lines au moins une fois')
-  // assert.ok(sentLines.length > 0, 'Devrait avoir envoyé des lignes')
-
-  //   await decpPlugin.run(context)
-  // })
-
-  // it('run with initialize (real send + mocked init)', async function () {
-  //   nock.cleanAll()
-
-  //   // bloque tout sauf staging-koumoul.com
-  //   nock.disableNetConnect()
-  //   nock.enableNetConnect((host) => host.includes('koumoul.com'))
-
-  //   const context = testUtils.context({
-  //     processingConfig: {
-  //       datasetMode: 'create',
-  //       datasetTitle: 'decp-test',
-  //       datasetFilterCreate: 'all',
-  //       initializeDataset: true
-  //     },
-  //     tmpDir: 'data',
-  //     processingId: 'id-dataset'
-  //   }, config, false)
-
-  //   const mockData = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/dataset_decp.json'), 'utf8')
-  //   )
-  //   const mockDecpGlobal = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/mini-decp-global.json'), 'utf8')
-  //   )
-  //   const mockDatasetApiDecp = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/dataset_api_decp.json'), 'utf8')
-  //   )
-
-  //   const mockApiDecp = JSON.parse(
-  //     fs.readFileSync(path.join(import.meta.dirname, 'resources/initialize/mini_decp_2026.json'), 'utf8')
-  //   )
-
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/api-decp/')
-  //     .reply(200, mockDatasetApiDecp)
-
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/')
-  //     .reply(200, mockData)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/bd33e98f-f8e3-49ba-9f26-51c95fe57234')
-  //     .reply(200, mockDecpGlobal)
-
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/bd33e98f-f8e3-49ba-9f26-51c95fe57234')
-  //     .reply(200, mockDecpGlobal)
-
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/00245086-fe70-42d0-a15e-ecd2120dc508')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/d83e708a-4861-45ea-80a4-31162faca55e')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/311f31e5-a279-4740-b001-ff22392c8446')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/ab45f51a-c0eb-4739-9e78-4cdbaa38c9e9')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/f899fd05-3afd-45fd-88c2-f8f166a1b36d')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/62d01401-ba9e-4d00-86ff-dfd329beb3fc')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/aa311680-1ed1-4a64-b500-261758fdc9d1')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/cc79c825-8022-45d2-b02e-133d972eb2dd')
-  //     .reply(200, mockApiDecp)
-  //   nock('https://www.data.gouv.fr')
-  //     .persist()
-  //     .get('/api/1/datasets/r/519129fa-1729-4e52-80be-e1a0be99397d')
-  //     .reply(200, mockApiDecp)
-
-
-  //   // ---- vrai envoi ----
-  //   const res = await decpPlugin.run(context)
-
-  //   console.log('Réponse du serveur :', JSON.stringify(res, null, 2))
-
-  //   assert.ok(true, 'Run terminé avec envoi réel')
-  // })
 })
