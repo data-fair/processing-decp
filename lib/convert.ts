@@ -1,5 +1,8 @@
 import type { ProcessingContext } from '@data-fair/lib-common-types/processings.js'
 
+// TODO  : Ajouter un filtre pour les données abhérentes pour le montant, la durée en mois, les date de notification et de signature, le nombre d'offre.
+// remplacer ces données par "NC" ou nulle (non conformes)
+
 export const flattenData = (data: any, mapping: any[], log: ProcessingContext['log']) => {
   if (!data) return {}
   const newData: any = buildEmptyRecord(mapping)
