@@ -6,7 +6,6 @@ import { pipeline } from 'node:stream/promises'
 import path from 'node:path'
 import dayjs from 'dayjs'
 import { urlDecp } from './url.ts'
-import { log } from 'node:console'
 
 class FileNotFoundError extends Error {
   constructor (message: string) {
