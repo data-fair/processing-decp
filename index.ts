@@ -25,50 +25,6 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
   if (create) {
     const titleBase = processingConfig.datasetTitle as string
     const initialize = processingConfig.initializeDataset
-    const extensions = [
-      {
-        active: true,
-        type: 'remoteService',
-        remoteService: 'dataset:geolocalisation-des-etablissements-du-repertoire-sirene',
-        action: 'masterData_bulkSearch_siret-coords',
-        select: [
-          'x_longitude',
-          'y_latitude'
-        ],
-        overwrite: {},
-        propertyPrefix: '_siret_coords'
-      },
-      {
-        active: true,
-        type: 'remoteService',
-        remoteService: 'dataset:sirene',
-        action: 'masterData_bulkSearch_siret-infos',
-        select: [
-          '_infos_commune.code_departement',
-          '_infos_commune.code_region',
-          'denominationUniteLegale'
-        ],
-        overwrite: {},
-        propertyPrefix: '_siret_infos'
-      }
-    ]
-    // const extensions = [
-    //   {
-    //     active: true,
-    //     type: 'remoteService',
-    //     remoteService: 'koumoul-com-dataset-sirene',
-    //     action: 'masterData_bulkSearch_siret-infos',
-    //     select: [
-    //       'denominationUniteLegale',
-    //       '_siret_coords.y_latitude',
-    //       '_siret_coords.x_longitude',
-    //       '_infos_commune.code_departement',
-    //       '_infos_commune.code_region'
-    //     ],
-    //     overwrite: {},
-    //     propertyPrefix: '_siret_infos'
-    //   }
-    // ]
 
     const all = processingConfig.datasetFilterCreate === 'all'
     const marcheFilter = all || processingConfig.datasetFilterCreate === 'marche'
@@ -90,7 +46,6 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
         isRest: true,
         schema: datasetSchemaConcession,
         primaryKey: primaryKeyConcession,
-        extensions,
         extras: { processingId }
       })).data
       await log.step(`Création du nouveau jeu de donnée : "${dataset.title}"`)
@@ -104,20 +59,6 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
     }
     if (marcheFilter) {
       const primaryKeyMarche = ['id', 'montant', 'acheteurid', 'idtitulaire', 'objet']
-      const extensionCPV = {
-        active: true,
-        type: 'remoteService',
-        remoteService: 'dataset:a5u3jsc115-84-1c2591opar',
-        action: 'masterData_bulkSearch_nomenclature-des-secteurs-dachat-code-cpv',
-        select: [
-          'secteurs',
-          'soussecteurs',
-          'intitule_officiel_par_code_cpv'
-        ],
-        overwrite: {},
-        propertyPrefix: '_nomenclature_des-secteurs-dachat-code-cpv'
-      }
-      extensions.push(extensionCPV)
       const title = titleBase + ' (marché)'
 
       const dataset = (await axios.post('api/v1/datasets', {
@@ -125,7 +66,6 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
         isRest: true,
         schema: datasetSchemaMarche,
         primaryKey: primaryKeyMarche,
-        extensions,
         extras: { processingId }
       })).data
       await log.info(`Création du nouveau jeu de donnée : "${dataset.title}"`)
@@ -145,7 +85,6 @@ export const run = async (context: ProcessingContext<ProcessingConfig>) => {
     const marcheFilter = processingConfig.datasetFilterUpdate === 'marche'
     const marcheConcession = processingConfig.datasetFilterUpdate === 'concession'
     const date = processingConfig._overrideDate as string ?? dayjs().format('YYYY-MM-DD')
-    // récupération de l'id du jeu de donnée
     const ref = processingConfig.dataset
     log.info(`Récupération du dataset "${ref.title || ref.id}"`)
 

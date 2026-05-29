@@ -9,7 +9,6 @@ import { countContract } from './utils.ts'
 import { Writable, Transform } from 'stream'
 import { flattenData } from './convert.ts'
 
-// TODO stopper le processus si la donnée est vide
 export const sendFlattenData = async (source: string, mapping: any[], filtre: any, readFilePath: string, datasetId: string, context: ProcessingContext<ProcessingConfig>) => {
   const { log, axios } = context
   const count: number = await countContract(readFilePath, filtre)
@@ -139,12 +138,9 @@ class WritableSender extends Writable {
     for (let attempt = 1; attempt <= 2; attempt++) {
       this.abortController = new AbortController()
 
-      // Timeout de 10 minutes
       const timeoutId = setTimeout(() => this.abortController!.abort(), 10 * 60 * 1000)
 
       try {
-        // this.log.info(`Batch ${this.batchIndex} — tentative ${attempt}/2`)
-
         const response = await this.axios({
           method: 'post',
           url: 'api/v1/datasets/' + this.datasetId + '/_bulk_lines',
@@ -164,7 +160,6 @@ class WritableSender extends Writable {
           err.name === 'AbortError' ||
           err.name === 'CanceledError'
 
-        // Annulation explicite (via abort()) — on remonte sans retry
         if (err.message?.startsWith('ABORTED_AT_BATCH:')) throw err
 
         if (isTimeout && attempt === 1) {
@@ -187,22 +182,17 @@ class WritableSender extends Writable {
   async _write (batch: any[], _encoding: string, callback: Function) {
     this.batchIndex++
 
-    // Reprise : on saute les batchs déjà envoyés
     if (this.batchIndex <= this.startFromBatch) {
       this.log.info(`Batch ${this.batchIndex} — ignoré (reprise depuis ${this.startFromBatch})`)
       this.increment += batch.length
       return callback()
     }
 
-    // this.log.info(`Envoi batch ${this.batchIndex} (${batch.length} objets)`)
     this.increment += batch.length
 
     try {
       this.dataset = await this.sendWithRetry(batch)
-      // const percent = Math.round(this.increment / this.divisor)
       this.log.progress(`Envoie des données du : ${this.source}`, this.increment, this.divisor)
-      // this.log.info(percent + '% des fichiers chargés')
-      // this.log.info(`Batch ${this.batchIndex} — ok: ${this.dataset.nbOk}, erreurs: ${this.dataset.nbErrors}`)
 
       if (this.delayBetweenBatches > 0) {
         await this.delay(this.delayBetweenBatches)

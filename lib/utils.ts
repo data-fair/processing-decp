@@ -4,12 +4,12 @@ import { pick } from 'stream-json/filters/pick.js'
 import { streamArray } from 'stream-json/streamers/stream-array.js'
 import fs from 'fs-extra'
 
-export const countContract = async (cheminFichier: string, filter: string) => {
+export const countContract = async (pathFile: string, filter: string) => {
   let compteur: number = 0
 
   return new Promise<number>((resolve, reject) => {
     const pipeline = chain([
-      fs.createReadStream(cheminFichier),
+      fs.createReadStream(pathFile),
       parser(),
       pick({ filter: `${filter}` }),
       streamArray()
