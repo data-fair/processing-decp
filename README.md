@@ -141,3 +141,13 @@ extensions = [
 This processing plugin interacts with the following official resources:
 - [DECP - Consolidated Files on data.gouv.fr](https://www.data.gouv.fr/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides)
 - [DECP API on data.gouv.fr](https://www.data.gouv.fr/datasets/api-decp)
+
+## Release
+
+Processing plugins are fetched from the npm registry with a filter on keyword "data-fair-processings-plugin". So publishing a plugin is as simple as publishing the npm package:
+
+```bash
+npm version minor
+npm publish
+git push --follow-tags
+```

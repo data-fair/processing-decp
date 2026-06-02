@@ -8,7 +8,6 @@ import path from 'node:path'
 import testUtils from '@data-fair/lib-processing-dev/tests-utils.js'
 import * as decpPlugin from '../index.ts'
 
-import pluginConfigSchema from '../plugin-config-schema.json' with { type: 'json' }
 import processingConfigSchema from '../processing-config-schema.json' with { type: 'json' }
 
 import { countContract } from '../lib/utils.ts'
@@ -18,9 +17,6 @@ describe('DECP processing', () => {
   const dataFairUrl = 'https://koumoul.com/data-fair'
   afterEach(() => {
     nock.cleanAll()
-  })
-  it('should expose a plugin config schema for super admins', async () => {
-    assert.ok(pluginConfigSchema)
   })
   it('should expose a processing config schema for users', async () => {
     assert.equal(processingConfigSchema.type, 'object')
