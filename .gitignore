@@ -4,4 +4,4 @@ node_modules/
 *.tgz
 test-it/result/
 test-it/resources
-data
+data/
